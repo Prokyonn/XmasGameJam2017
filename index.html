@@ -6,11 +6,13 @@
 <title>Chistmas Impossible</title>
 
     <script src="//cdn.jsdelivr.net/npm/phaser-ce@2.9.2/build/phaser.js"></script>
-    <script src="game.js"></script>
+    <script src="flyGame.js"></script>
+    <script src="gameHouse.js"></script>
 
     <script>
         (function() {
-            this.game.state.add("game", game);
+            game.state.add("flyGame", game);
+            game.state.add("gameHouse", gameHouse);
         })();
     </script>
 

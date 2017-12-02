@@ -8,7 +8,9 @@ var cursors;
 var jumpButton;
 var bg;
 
-var state = {
+var gameHouse = function(game) {}
+
+gameHouse.prototype = {
     preload: function () {
         game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet-right.png?' + ASSET_VERSION, 150, 150);
         game.load.image('background', BASE_PATH + 'background2.png?' + ASSET_VERSION);
@@ -126,12 +128,3 @@ var state = {
     //     this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
     // }
 };
-
-
-var game = new Phaser.Game(
-    800,
-    600,
-    Phaser.CANVAS,
-    document.querySelector('#screen'),
-    state
-);

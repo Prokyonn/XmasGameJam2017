@@ -22,13 +22,6 @@ var state = {
         this.game.add.tileSprite(0, 0, 1920, 1080, 'background');
         this.game.world.setBounds(0, 0, 1920, 1080);
 
-        var randomnumber = Math.floor(Math.random()*20);
-
-        star = this.game.add.sprite(housePosX[randomnumber], housePosY[randomnumber], 'star');
-        this.game.physics.enable(star);
-        star.scale.setTo(0.1, 0.1);
-        star.anchor.set(0.5);
-
         cursors = game.input.keyboard.createCursorKeys();
 
         emitter = game.add.emitter(game.world.centerX, game.world.centerY, 400);
@@ -37,6 +30,12 @@ var state = {
         emitter.setAlpha(1, 0, 3000);
         emitter.setScale(0.8, 0, 0.8, 0, 3000);
         emitter.start(false, 3000, 5);
+
+        var randomnumber = Math.floor(Math.random()*20);
+        star = this.game.add.sprite(housePosX[randomnumber], housePosY[randomnumber], 'star');
+        this.game.physics.enable(star);
+        star.scale.setTo(0.1, 0.1);
+        star.anchor.set(0.5);
 
         player = this.game.add.sprite(game.world.centerX, game.world.centerY, 'player');
         this.game.physics.enable(player);
@@ -110,11 +109,10 @@ var state = {
     }
 };
 
-
 var game = new Phaser.Game(
     800,
     600,
     Phaser.CANVAS,
-    document.querySelector('#screen'),
+    document.querySelector("#screen"),
     state
 );
