@@ -6,6 +6,9 @@ var cursors;
 
 var bmd;
 var circle;
+var graphics;
+
+var star;
 
 var colors;
 var i = 0;
@@ -18,77 +21,41 @@ var objectCollide;
 
 var state = {
     preload: function () {
-        game.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
-        game.load.image('player', BASE_PATH + 'santa.png?' + ASSET_VERSION);
+        this.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
+        this.load.image('player', BASE_PATH + 'santa.png?' + ASSET_VERSION);
+        this.load.image('star',BASE_PATH+'star.png?'+ASSET_VERSION);
     },
     create: function () {
+        this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-        game.add.tileSprite(0, 0, 1920, 1080, 'background');
+        this.game.add.tileSprite(0, 0, 1920, 1080, 'background');
+        this.game.world.setBounds(0, 0, 1920, 1080);
 
-        game.world.setBounds(0, 0, 1920, 1080);
+        star = this.game.add.sprite(1200 - x_offset, 600 - y_offset, 'star');
+        this.game.physics.enable(star);
+        star.scale.setTo(1, 1);
+        star.anchor.set(0.5);
 
-        game.physics.startSystem(Phaser.Physics.P2JS);
-
-        player = game.add.sprite(game.world.centerX, game.world.centerY, 'player');
+        player = this.game.add.sprite(game.world.centerX, game.world.centerY, 'player');
+        this.game.physics.enable(player);
         player.scale.setTo(0.25, 0.25); //verkleinert das Playerimage
         player.anchor.set(0.5);
-
-        game.physics.arcade.enable(player);
-
-        // game.physics.p2.enable(player);
-
         player.body.fixedRotation = true;
-
         player.body.collideWorldBounds = true;
+        player.body.drag.set(50);
+        
 
         cursors = game.input.keyboard.createCursorKeys();
-
-        player.anchor.set(0.5);
-        player.body.drag.set(50);
 
         //  Notice that the sprite doesn't have any momentum at all,
         //  it's all just set by the camera follow type.
         //  0.1 is the amount of linear interpolation to use.
         //  The smaller the value, the smooth the camera (and the longer it takes to catch up)
-        game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
-
-        //circles
-
-        colors = Phaser.Color.HSVColorWheel();
-
-        //  Create a Circle
-        circle = new Phaser.Circle(game.world.centerX, game.world.centerY, 30);
-
-        //  Create a BitmapData just to plot Circle points to
-        bmd = game.add.bitmapData(game.width, game.height);
-        bmd.addToWorld();
-
-        //  And display our circle on the top
-        var graphics = game.add.graphics(1200 - x_offset, 600 - y_offset);
-        graphics.lineStyle(1, 0xFF69B4, 1);
-        graphics.beginFill(0xFF69B4, 1);
-        graphics.drawCircle(circle.x, circle.y, circle.diameter);
-
-        p = new Phaser.Point();
-
-
-        //test
-        this.scoreText = this.add.text(
-            this.world.width / 2,
-            this.world.height / 3,
-            "",
-            {
-                fill: '#ffdd00',
-                align: 'center'
-            }
-        );
-        this.scoreText.anchor.setTo(0.5, 0.5);
-        this.scoreText.fontSize = 20;
-        this.reset();
-
-
+        this.game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
     },
     update: function () {
+        this.game.physics.arcade.overlap(player, star, this.killByCircle, null, this);
+        
         if (cursors.up.isDown) {
             game.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
         }
@@ -109,24 +76,6 @@ var state = {
             player.body.angularVelocity = 0;
         }
 
-
-        //circles
-        for (var c = 0; c < 10; c++)
-        {
-            circle.random(p);
-
-            //  We'll floor it as setPixel needs integer values and random returns floats
-            p.floor();
-
-            bmd.setPixel(p.x, p.y, colors[i].r, colors[i].g, colors[i].b);
-        }
-
-        i = game.math.wrapValue(i, 1, 359);
-
-        objectCollide = game.physics.arcade.collide(player, this.circle);
-        this.game.physics.arcade.overlap(player, this.circle, this.killByCircle, null, this);
-
-
     }, render: function () {
        // game.debug.cameraInfo(game.camera, 32, 32);
         game.debug.spriteInfo(player, 32, 32);
@@ -137,38 +86,10 @@ var state = {
     },
     reset: function () {
 
-    },
-    addScore: function (addWhat) {
-        this.score += addWhat;
-        this.scoreText.setText("SCORE: " + this.score);
-    },
-    showHint: function (focusOn, text) {
-        var hint = this.game.add.text(
-            focusOn.x,
-            focusOn.y,
-            text,
-            {
-                fill: '#ffdd00',
-                align: 'center'
-            }
-        );
-        hint.anchor.setTo(0.5, 0.5);
-        hint.fontSize = 20;
-
-        var move = this.game.add.tween(hint);
-        move.to({y: hint.y - 100, x: hint.x - 100 * Math.random() + 50}, 1000);
-        move.onComplete.add(function () {
-            hint.kill()
-        }, this);
-        move.start();
-
-    }, killByCircle: function(player, circle) {
-        this.setGameOver();
-
-
-    }, setGameOver: function () {
-        this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
-    },
+    }, 
+    killByCircle: function(player, star) {
+        star.kill();
+    }
 };
 
 
