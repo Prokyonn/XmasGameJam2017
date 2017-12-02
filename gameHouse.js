@@ -12,6 +12,7 @@ var state = {
     preload: function () {
         game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
         game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION);
+        game.load.image("chimney", BASE_PATH + "chimney.png")
     },
     create: function () {
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -38,15 +39,14 @@ var state = {
 
         cursors = game.input.keyboard.createCursorKeys();
         jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-
+        this.chimney = this.add.sprite(0, this.world.height - 8, 'chimney');
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
         cursors = game.input.keyboard.createCursorKeys();
     },
     update: function () {
         // game.physics.arcade.collide(player, layer);
-
+        this.game.physics.arcade.overlap(this.player, this.chimneys, this.killedByChimney, null, this);
         player.body.velocity.x = 0;
 
         if (cursors.left.isDown) {
@@ -64,6 +64,9 @@ var state = {
                 player.animations.play('right');
                 facing = 'right';
             }
+        }
+        else if (this.gameOver){
+            this.showHint(player, "FUCK! I woke them up.")
         }
         else {
             if (facing != 'idle') {
@@ -97,6 +100,10 @@ var state = {
     reset: function () {
 
     },
+    killedByChimney: function (player, chimney) {
+        chimney.body.velocity.x = 0;
+        this.setGameOver();
+    },
     addScore: function (addWhat) {
         this.score += addWhat;
         this.scoreText.setText("SCORE: " + this.score);
@@ -121,13 +128,13 @@ var state = {
         }, this);
         move.start();
 
+    },
+    setGameOver: function () {
+        // this.timeOver = this.game.time.now;
+        this.gameOver = true;
+
+       // this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
     }
-    // setGameOver: function () {
-    //     this.timeOver = this.game.time.now;
-    //     this.gameOver = true;
-    //
-    //     this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
-    // }
 };
 
 
