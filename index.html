@@ -1,45 +1,23 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-
-<title>Chistmas Impossible</title>
-
-    <script src="//cdn.jsdelivr.net/npm/phaser-ce@2.9.2/build/phaser.js"></script>
-    <script src="flyGame.js"></script>
-    <script src="gameHouse.js"></script>
-
-    <script>
-        (function() {
-            game.state.add("flyGame", game);
-            game.state.add("gameHouse", gameHouse);
-        })();
-    </script>
-
-<style>
-body {
-  background: #000;
-  margin: 0;
-  padding: 0;
-}
-#screen-saver {
-  width: 100%;
-}
-#screen {
-  margin: 0 auto;
-}
-</style>
-
-</head>
-
-
-<body>
-
-<div id="screen-saver">
-<div id="screen"></div>
-</div>
-
-</body>
-
-
+    <head>
+    <title>Chistmas Impossible</title>
+        <script src="//cdn.jsdelivr.net/npm/phaser-ce@2.9.2/build/phaser.js"></script>
+        <script src="flyGame.js"></script>
+        <script src="gameHouse.js"></script>
+        <style>
+            body{margin:0}
+        </style>
+        <script>
+            (function() {
+                var game = new Phaser.Game(800, 600, Phaser.CANVAS, "game");
+                game.state.add("flyGame", flyGame);
+                game.state.add("gameHouse", gameHouse);
+                game.state.start("flyGame");
+            })();
+        </script>
+    </head>
+    <body>
+    </body>
 </html>
