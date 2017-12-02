@@ -27,9 +27,12 @@ var state = {
 
         player.body.fixedRotation = true;
 
-        player.body.collideWorldBounds=true;
+        player.body.collideWorldBounds = true;
 
         cursors = game.input.keyboard.createCursorKeys();
+
+        player.anchor.set(0.5);
+        player.body.drag.set(50);
 
         //  Notice that the sprite doesn't have any momentum at all,
         //  it's all just set by the camera follow type.
@@ -38,42 +41,55 @@ var state = {
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
     },
     update: function () {
-        // player.body.setZeroVelocity();
+        // player.body.velocity.x = 0;
+        // player.body.velocity.y = 0;
+        // player.body.angularVelocity = 0;
         //
-        // if (cursors.up.isDown) {
-        //     player.body.moveUp(300)
-        // }
-        // else if (cursors.down.isDown) {
-        //     player.body.moveDown(300);
+        // if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+        //     player.body.angularVelocity = -300;
+        // }else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+        //     player.body.angularVelocity = 300;
+        // }else {
+        //     player.body.angularVelocity = 0;
         // }
         //
-        // if (cursors.left.isDown) {
-        //     player.body.velocity.x = -300;
-        // }
-        // else if (cursors.right.isDown) {
-        //     player.body.moveRight(300);
+        // if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
+        //     //game.physics.arcade.velocityFromAngle(player.angle, 500, player.body.velocity);
+        //     game.physics.arcade.accelerationFromRotation(player.rotation, 20000, player.body.acceleration);
+        // }else {
+        //     player.body.acceleration.set(0);
         // }
 
-        player.body.velocity.x = 0;
-        player.body.velocity.y = 0;
-        player.body.angularVelocity = 0;
+        if (cursors.up.isDown) {
+            game.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
+        }
+        else if (cursors.down.isDown) {
+            game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration);
+            // if(player.body.acceleration.get() > 100) {
+            //     game.physics.arcade.accelerationFromRotation(player.rotation, -100, player.body.acceleration);
+            // }else if (player.body.acceleration.get() > 0) {
+            //     game.physics.arcade.accelerationFromRotation(player.rotation, -1, player.body.acceleration);
+            // }
+        }
+        else {
+            player.body.acceleration.set(0);
+        }
 
-        if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
+        if (cursors.left.isDown) {
             player.body.angularVelocity = -300;
-        }else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+        }
+        else if (cursors.right.isDown) {
             player.body.angularVelocity = 300;
         }
-
-        if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
-            game.physics.arcade.velocityFromAngle(player.angle, 500, player.body.velocity);
+        else {
+            player.body.angularVelocity = 0;
         }
-
 
 
     }, render: function () {
         game.debug.cameraInfo(game.camera, 32, 32);
 
-        },
+    },
     start: function () {
 
     },
