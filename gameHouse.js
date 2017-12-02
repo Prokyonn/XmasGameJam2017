@@ -12,6 +12,8 @@ var desk;
 var lamp;
 var glass;
 var smallTable;
+var gift;
+var cat;
 
 var gameHouse = function(game) { }
 
@@ -32,13 +34,15 @@ gameHouse.prototype = {
         }
     },
     preload: function () {
-        this.game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
-        this.game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION, 24, 96);
-        this.game.load.image("desk", BASE_PATH + "desk.png?" + ASSET_VERSION);
-        this.game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
-        this.game.load.image("lamp", BASE_PATH + "lamp.png?" + ASSET_VERSION);
-        this.game.load.image("glass", BASE_PATH + "glas.png?" + ASSET_VERSION);
-        this.game.load.image("smallTable", BASE_PATH + "tischKlein.png?" + ASSET_VERSION);
+        game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
+        game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION, 24, 96);
+        game.load.image("desk", BASE_PATH + "desk.png?" + ASSET_VERSION);
+        game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
+        game.load.image("lamp", BASE_PATH + "lamp.png?" + ASSET_VERSION);
+        game.load.image("glass", BASE_PATH + "glas.png?" + ASSET_VERSION);
+        game.load.image("smallTable", BASE_PATH + "smallTable.png?" + ASSET_VERSION);
+        game.load.image("gift", BASE_PATH + "gift.png?" + ASSET_VERSION);
+        game.load.image("cat", BASE_PATH + "cat.png?" + ASSET_VERSION);
     },
     create: function () {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -48,8 +52,13 @@ gameHouse.prototype = {
         bg = this.game.add.tileSprite(0, 0, 1920, 600, 'background');
         this.game.physics.arcade.gravity.y = 300;
 
-        this.createPlayer();
+
         this.createFloor();
+
+        this.smallTables = this.add.group();
+        this.spawnSmallTable(-450, 120);
+
+        this.createPlayer();
 
         cursors = this.game.input.keyboard.createCursorKeys();
         jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -58,15 +67,20 @@ gameHouse.prototype = {
         this.spawnDesk(200, 100);
 
         this.lamps = this.add.group();
-        this.spawnLamp(150, 66);
-
-        this.smallTables = this.add.group();
-        this.spawnSmallTable(400, 100);
+        this.spawnLamp(150, 66, 1, 1);
+        this.spawnLamp(450, 15, 1.5, 1.5);
 
         this.glasses = this.add.group();
         this.spawnGlass(50, 52);
-        this.spawnGlass(20, 52);
-        this.spawnGlass(0, 52);
+        this.spawnGlass(30, 52);
+        this.spawnGlass(-180, 52);
+
+        this.cats = this.add.group();
+        this.spawnCat(-400, -15);
+
+
+        // this.smallTables = this.add.group();
+        // this.spawnSmallTable(-350, 100);
 
         this.hints = this.add.group();
 
@@ -101,13 +115,22 @@ gameHouse.prototype = {
         cursors = this.game.input.keyboard.createCursorKeys();
     },
     update: function () {
-        this.start();
         this.game.physics.arcade.collide(player, this.desks);
         this.game.physics.arcade.collide(floor, this.desks);
         this.game.physics.arcade.collide(player, floor);
+
+        this.game.physics.arcade.collide(player, this.smallTables);
+
         this.game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
+        this.game.physics.arcade.collide(player, this.lamps);
+
         this.game.physics.arcade.overlap(player, this.glasses, this.killedByObject, null, this);
+        this.game.physics.arcade.collide(player, this.glasses);
+
         this.game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
+        this.game.physics.arcade.collide(player, this.lamps);
+
+        this.game.physics.arcade.overlap(player, this.cats, this.killedByObject, null, this);
 
         player.body.velocity.x = 0;
 
@@ -131,6 +154,11 @@ gameHouse.prototype = {
             if (player.body.touching.down) {
                 player.animations.play('right');
                 facing = 'right';
+            }
+        } else if (cursors.down.isDown) {
+            if (player.x > 1650) {
+                gift = this.spawnGift(player.body.x, player.body.y);
+                // this.game.state.start("flyGame");
             }
         } else {
             if (facing != 'idle') {
@@ -167,7 +195,7 @@ gameHouse.prototype = {
         desk.body.setSize(700, 133, 0, 90);
         desk.scale.setTo(0.5, 0.5);
     },
-    spawnLamp: function (x, y) {
+    spawnLamp: function (x, y, scaleX, scaleY) {
         lamp = this.lamps.create(
             this.game.width - x,
             floor.body.top - y,
@@ -179,7 +207,7 @@ gameHouse.prototype = {
         lamp.body.moves = false;
         lamp.body.setSize(80, 125, 26, 0);
         lamp.anchor.setTo(0.5, 0.9);
-        //lamp.scale.setTo(0, 0);
+        lamp.scale.setTo(scaleX, scaleY);
     },
     spawnGlass: function (x, y) {
         glass = this.glasses.create(
@@ -196,6 +224,22 @@ gameHouse.prototype = {
         glass.anchor.setTo(0.5, 0.9);
     },
 
+    spawnCat: function (x, y) {
+        cat = this.cats.create(
+            this.game.width - x,
+            floor.body.top - y,
+            'cat'
+        );
+        this.game.physics.arcade.enable(cat);
+
+        cat.body.immovable = true;
+        cat.body.moves = false;
+        cat.body.setSize(80, 125, 26, 0);
+        cat.scale.setTo(0.1, 0.1);
+        cat.anchor.setTo(0.5, 0.9);
+    },
+
+
     spawnSmallTable: function (x, y) {
         smallTable = this.smallTables.create(
             this.game.width - x,
@@ -206,7 +250,18 @@ gameHouse.prototype = {
 
         smallTable.body.immovable = true;
         smallTable.body.moves = false;
-        smallTable.body.setSize(100, 100, 26, 0);
+        smallTable.body.setSize(185, 130, 5, 80);
+    },
+    spawnGift: function (x, y) {
+        gift = this.smallTables.create(
+            x + 20,
+            y + 72,
+            'gift'
+        );
+        this.game.physics.arcade.enable(gift);
+        gift.body.immovable = true;
+        gift.body.moves = false;
+        gift.body.setSize(100, 100, 26, 0);
     },
 
     render: function () {
@@ -214,7 +269,7 @@ gameHouse.prototype = {
         this.game.debug.body(player);
         this.game.debug.body(desk);
         this.game.debug.body(lamp);
-        this.game.debug.body(smallTable);
+        // game.debug.body(smallTable);
         // game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
         this.game.debug.cameraInfo(this.game.camera, 32, 32);
@@ -283,7 +338,7 @@ gameHouse.prototype = {
     },
 
     createPlayer: function () {
-        player = this.game.add.sprite(150, 320, 'santa');
+        player = this.game.add.sprite(100, 320, 'santa');
         player.scale.setTo(1.3, 1.3); //verkleinert das Playerimage
         this.game.physics.enable(player, Phaser.Physics.ARCADE);
         player.body.collideWorldBounds = true;
@@ -300,8 +355,10 @@ gameHouse.prototype = {
         player.animations.add('jumpRight', [32], 1, false);
         player.animations.add('standLeft', [35], 1, false);
         player.animations.add('standRight', [34], 1, false);
-    }, createFloor: function () {
-        floor = this.game.add.sprite(0, this.game.world.height - 50, 'floor');
+    },
+
+    createFloor: function () {
+        floor = this.game.add.sprite(0, game.world.height - 50, 'floor');
         this.game.physics.enable(floor);
         floor.body.collideWorldBounds = true;
         floor.body.immovable = true;
