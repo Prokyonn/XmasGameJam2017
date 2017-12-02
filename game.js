@@ -23,13 +23,13 @@ var state = {
     preload: function () {
         this.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
         this.load.image('player', BASE_PATH + 'santa.png?' + ASSET_VERSION);
-        this.load.image('star',BASE_PATH+'star.png?'+ASSET_VERSION);
+        this.load.image('star',BASE_PATH+'HouseStar.png?'+ASSET_VERSION);
     },
     create: function () {
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
-
         this.game.add.tileSprite(0, 0, 1920, 1080, 'background');
         this.game.world.setBounds(0, 0, 1920, 1080);
+
+        this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         star = this.game.add.sprite(1200 - x_offset, 600 - y_offset, 'star');
         this.game.physics.enable(star);
