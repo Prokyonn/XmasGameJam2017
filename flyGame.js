@@ -12,6 +12,22 @@ var flyGame = function (game) {
 }
 
 flyGame.prototype = {
+
+    init: function(score,timer,timerEvent) {
+        if(timer==null){
+            this.timer = this.game.time.create();
+            this.timerEvent = this.timer.add(Phaser.Timer.MINUTE * 1 + Phaser.Timer.SECOND * 30, this.endTimer, this);
+        }
+        else{
+            this.timer=timer;
+            this.timerEvent=timerEvent;
+        }
+        if(score==null){
+            this.score=0;
+        }else {
+            this.score = score;
+        }
+    },
     preload: function () {
         this.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
         this.load.image('star1', BASE_PATH + 'star.png?' + ASSET_VERSION);
@@ -78,11 +94,6 @@ flyGame.prototype = {
         this.timeText.fixedToCamera = true;
         this.timeText.cameraOffset.setTo(550, 20);
 
-        timer = this.game.time.create();
-        this.minute = 1;
-        this.second = 30;
-        timerEvent = timer.add(Phaser.Timer.MINUTE * this.minute + Phaser.Timer.SECOND * this.second, this.endTimer, this);
-
 
         this.game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
@@ -133,8 +144,8 @@ flyGame.prototype = {
 
     }, render: function () {
         // game.debug.cameraInfo(game.camera, 32, 32);
-        if (timer.running) {
-            this.timeText.setText("Time:" + this.formatTime(Math.round((timerEvent.delay - timer.ms) / 1000)));
+        if (this.timer.running) {
+            this.timeText.setText("Time:" + this.formatTime(Math.round((this.timerEvent.delay - this.timer.ms) / 1000)));
 
 
         }
@@ -150,9 +161,8 @@ flyGame.prototype = {
         return minutes.substr(-2) + ":" + seconds.substr(-2);
     },
     start: function () {
-        this.score = 0;
         this.scoreText.setText("SCORE: " + this.score);
-        timer.start();
+        this.timer.start();
 
 
     }
@@ -162,7 +172,7 @@ flyGame.prototype = {
     },
     killByCircle: function (player, star) {
         star.kill();
-        this.game.state.start("gameHouse");
+        this.game.state.start("gameHouse",true,false,this.score,this.timer,this.timerEvent);
     }
 };
 

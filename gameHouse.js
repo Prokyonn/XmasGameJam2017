@@ -16,6 +16,21 @@ var smallTable;
 var gameHouse = function(game) { }
 
 gameHouse.prototype = {
+    init: function(score,timer,timerEvent) {
+        if(timer==null){
+            this.timer = this.game.time.create();
+            this.timerEvent = this.timer.add(Phaser.Timer.MINUTE * this.minute + Phaser.Timer.SECOND * this.second, this.endTimer, this);
+        }
+        else{
+            this.timer=timer;
+            this.timerEvent=timerEvent;
+        }
+        if(score==null){
+            this.score=0;
+        }else {
+            this.score = score;
+        }
+    },
     preload: function () {
         this.game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
         this.game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION, 24, 96);
@@ -79,8 +94,6 @@ gameHouse.prototype = {
         this.timeText.fixedToCamera = true;
         this.timeText.cameraOffset.setTo(550, 20);
 
-        timer = this.game.time.create();
-        timerEvent = timer.add(Phaser.Timer.MINUTE * 1 + Phaser.Timer.SECOND * 30, this.endTimer, this);
 
 
         this.game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
@@ -205,8 +218,8 @@ gameHouse.prototype = {
         // game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
         this.game.debug.cameraInfo(this.game.camera, 32, 32);
-        if (timer.running) {
-            this.timeText.setText("Time:" + this.formatTime(Math.round((timerEvent.delay - timer.ms) / 1000)));
+        if (this.timer.running) {
+            this.timeText.setText("Time:" + this.formatTime(Math.round((this.timerEvent.delay - this.timer.ms) / 1000)));
 
 
         }
@@ -222,9 +235,8 @@ gameHouse.prototype = {
         return minutes.substr(-2) + ":" + seconds.substr(-2);
     },
     start: function () {
-        this.score = 0;
         this.scoreText.setText("SCORE: " + this.score);
-        timer.start();
+        this.timer.start();
 
     },
     reset: function () {
