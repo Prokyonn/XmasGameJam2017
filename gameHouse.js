@@ -23,7 +23,7 @@ var state = {
         game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
         game.load.image("lamp", BASE_PATH + "lamp.png?" + ASSET_VERSION);
         game.load.image("glass", BASE_PATH + "glas.png?" + ASSET_VERSION);
-        game.load.image("smallTable", BASE_PATH + "tischKlein.png?" + ASSET_VERSION);
+        game.load.image("smallTable", BASE_PATH + "smallTable.png?" + ASSET_VERSION);
         game.load.image("gift", BASE_PATH + "gift.png?" + ASSET_VERSION);
         game.load.image("cat", BASE_PATH + "cat.png?" + ASSET_VERSION);
     },
@@ -35,8 +35,13 @@ var state = {
         bg = game.add.tileSprite(0, 0, 1920, 600, 'background');
         game.physics.arcade.gravity.y = 300;
 
-        this.createPlayer();
+
         this.createFloor();
+
+        this.smallTables = this.add.group();
+        this.spawnSmallTable(-450, 120);
+
+        this.createPlayer();
 
         cursors = game.input.keyboard.createCursorKeys();
         jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -57,7 +62,7 @@ var state = {
         this.spawnCat(-400, -15);
 
 
-        this.smallTables = this.add.group();
+        // this.smallTables = this.add.group();
         // this.spawnSmallTable(-350, 100);
 
         this.hints = this.add.group();
@@ -70,6 +75,8 @@ var state = {
         game.physics.arcade.collide(player, this.desks);
         game.physics.arcade.collide(floor, this.desks);
         game.physics.arcade.collide(player, floor);
+
+        game.physics.arcade.collide(player, this.smallTables);
 
         game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
         game.physics.arcade.collide(player, this.lamps);
@@ -106,8 +113,10 @@ var state = {
                 facing = 'right';
             }
         } else if (cursors.down.isDown) {
-            if (player.x > 1650)
+            if (player.x > 1650) {
                 gift = this.spawnGift(player.body.x, player.body.y);
+                // this.game.state.start("flyGame");
+            }
         } else {
             if (facing != 'idle') {
                 if (facing == 'left') {
@@ -198,7 +207,7 @@ var state = {
 
         smallTable.body.immovable = true;
         smallTable.body.moves = false;
-        smallTable.body.setSize(100, 100, 26, 0);
+        smallTable.body.setSize(185, 130, 5, 80);
     },
     spawnGift: function (x, y) {
         gift = this.smallTables.create(
