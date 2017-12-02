@@ -34,15 +34,15 @@ gameHouse.prototype = {
         }
     },
     preload: function () {
-        game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
-        game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION, 24, 96);
-        game.load.image("desk", BASE_PATH + "desk.png?" + ASSET_VERSION);
-        game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
-        game.load.image("lamp", BASE_PATH + "lamp.png?" + ASSET_VERSION);
-        game.load.image("glass", BASE_PATH + "glas.png?" + ASSET_VERSION);
-        game.load.image("smallTable", BASE_PATH + "smallTable.png?" + ASSET_VERSION);
-        game.load.image("gift", BASE_PATH + "gift.png?" + ASSET_VERSION);
-        game.load.image("cat", BASE_PATH + "cat.png?" + ASSET_VERSION);
+        this.game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
+        this.game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION, 24, 96);
+        this.game.load.image("desk", BASE_PATH + "desk.png?" + ASSET_VERSION);
+        this.game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
+        this.game.load.image("lamp", BASE_PATH + "lamp.png?" + ASSET_VERSION);
+        this.game.load.image("glass", BASE_PATH + "glas.png?" + ASSET_VERSION);
+        this.game.load.image("smallTable", BASE_PATH + "smallTable.png?" + ASSET_VERSION);
+        this.game.load.image("gift", BASE_PATH + "gift.png?" + ASSET_VERSION);
+        this.game.load.image("cat", BASE_PATH + "cat.png?" + ASSET_VERSION);
     },
     create: function () {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -358,7 +358,7 @@ gameHouse.prototype = {
     },
 
     createFloor: function () {
-        floor = this.game.add.sprite(0, game.world.height - 50, 'floor');
+        floor = this.game.add.sprite(0, this.game.world.height - 50, 'floor');
         this.game.physics.enable(floor);
         floor.body.collideWorldBounds = true;
         floor.body.immovable = true;
