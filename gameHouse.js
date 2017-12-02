@@ -98,9 +98,8 @@ var state = {
                 facing = 'right';
             }
         } else if (cursors.down.isDown) {
-            if (gift != undefined)
-                gift.kill();
-            gift = this.spawnGift(player.body.x + 450, player.body.y - 150);
+            if (player.x > 1650)
+                gift = this.spawnGift(player.body.x, player.body.y);
         } else {
             if (facing != 'idle') {
                 if (facing == 'left') {
@@ -178,15 +177,15 @@ var state = {
         smallTable.body.setSize(100, 100, 26, 0);
     },
     spawnGift: function (x, y) {
-        smallTable = this.smallTables.create(
-            game.width - x,
-            floor.body.top - y,
+        gift = this.smallTables.create(
+            x + 20,
+            y + 72,
             'gift'
         );
-        game.physics.arcade.enable(smallTable);
-        smallTable.body.immovable = true;
-        smallTable.body.moves = false;
-        smallTable.body.setSize(100, 100, 26, 0);
+        game.physics.arcade.enable(gift);
+        gift.body.immovable = true;
+        gift.body.moves = false;
+        gift.body.setSize(100, 100, 26, 0);
     },
 
     render: function () {
