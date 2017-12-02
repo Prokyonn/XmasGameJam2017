@@ -13,29 +13,31 @@ var lamp;
 var glass;
 var smallTable;
 
-var state = {
+var gameHouse = function(game) { }
+
+gameHouse.prototype = {
     preload: function () {
-        game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
-        game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION, 24, 96);
-        game.load.image("desk", BASE_PATH + "desk.png?" + ASSET_VERSION);
-        game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
-        game.load.image("lamp", BASE_PATH + "lamp.png?" + ASSET_VERSION);
-        game.load.image("glass", BASE_PATH + "glas.png?" + ASSET_VERSION);
-        game.load.image("smallTable", BASE_PATH + "tischKlein.png?" + ASSET_VERSION);
+        this.game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
+        this.game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION, 24, 96);
+        this.game.load.image("desk", BASE_PATH + "desk.png?" + ASSET_VERSION);
+        this.game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
+        this.game.load.image("lamp", BASE_PATH + "lamp.png?" + ASSET_VERSION);
+        this.game.load.image("glass", BASE_PATH + "glas.png?" + ASSET_VERSION);
+        this.game.load.image("smallTable", BASE_PATH + "tischKlein.png?" + ASSET_VERSION);
     },
     create: function () {
-        game.physics.startSystem(Phaser.Physics.ARCADE);
-        game.world.setBounds(0, 0, 1920, 600);
+        this.game.physics.startSystem(Phaser.Physics.ARCADE);
+        this.game.world.setBounds(0, 0, 1920, 600);
 
 
-        bg = game.add.tileSprite(0, 0, 1920, 600, 'background');
-        game.physics.arcade.gravity.y = 300;
+        bg = this.game.add.tileSprite(0, 0, 1920, 600, 'background');
+        this.game.physics.arcade.gravity.y = 300;
 
         this.createPlayer();
         this.createFloor();
 
-        cursors = game.input.keyboard.createCursorKeys();
-        jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        cursors = this.game.input.keyboard.createCursorKeys();
+        jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
         this.desks = this.add.group();
         this.spawnDesk(200, 100);
@@ -53,17 +55,17 @@ var state = {
 
         this.hints = this.add.group();
 
-        game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+        this.game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
-        cursors = game.input.keyboard.createCursorKeys();
+        cursors = this.game.input.keyboard.createCursorKeys();
     },
     update: function () {
-        game.physics.arcade.collide(player, this.desks);
-        game.physics.arcade.collide(floor, this.desks);
-        game.physics.arcade.collide(player, floor);
-        game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
-        game.physics.arcade.overlap(player, this.glasses, this.killedByObject, null, this);
-        game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
+        this.game.physics.arcade.collide(player, this.desks);
+        this.game.physics.arcade.collide(floor, this.desks);
+        this.game.physics.arcade.collide(player, floor);
+        this.game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
+        this.game.physics.arcade.overlap(player, this.glasses, this.killedByObject, null, this);
+        this.game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
 
         player.body.velocity.x = 0;
 
@@ -100,9 +102,9 @@ var state = {
             }
         }
 
-        if (jumpButton.isDown && player.body.touching.down && game.time.now > jumpTimer) {
+        if (jumpButton.isDown && player.body.touching.down && this.game.time.now > jumpTimer) {
             player.body.velocity.y = -1000;
-            jumpTimer = game.time.now + 750;
+            jumpTimer = this.game.time.now + 750;
             if (facing == 'left') {
                 player.animations.play('jumpLeft');
             } else {
@@ -112,11 +114,11 @@ var state = {
     },
     spawnDesk: function (x, y) {
         desk = this.desks.create(
-            game.width - x,
+            this.game.width - x,
             floor.body.top - y,
             'desk'
         );
-        game.physics.arcade.enable(desk);
+        this.game.physics.arcade.enable(desk);
 
         desk.body.immovable = true;
         desk.body.moves = false;
@@ -125,11 +127,11 @@ var state = {
     },
     spawnLamp: function (x, y) {
         lamp = this.lamps.create(
-            game.width - x,
+            this.game.width - x,
             floor.body.top - y,
             'lamp'
         );
-        game.physics.arcade.enable(lamp);
+        this.game.physics.arcade.enable(lamp);
 
         lamp.body.immovable = true;
         lamp.body.moves = false;
@@ -139,11 +141,11 @@ var state = {
     },
     spawnGlass: function (x, y) {
         glass = this.glasses.create(
-            game.width - x,
+            this.game.width - x,
             floor.body.top - y,
             'glass'
         );
-        game.physics.arcade.enable(glass);
+        this.game.physics.arcade.enable(glass);
 
         glass.body.immovable = true;
         glass.body.moves = false;
@@ -154,11 +156,11 @@ var state = {
 
     spawnSmallTable: function (x, y) {
         smallTable = this.smallTables.create(
-            game.width - x,
+            this.game.width - x,
             floor.body.top - y,
             'smallTable'
         );
-        game.physics.arcade.enable(smallTable);
+        this.game.physics.arcade.enable(smallTable);
 
         smallTable.body.immovable = true;
         smallTable.body.moves = false;
@@ -167,13 +169,13 @@ var state = {
 
     render: function () {
         // game.debug.text(game.time.physicsElapsed, 32, 32);
-        game.debug.body(player);
-        game.debug.body(desk);
-        game.debug.body(lamp);
-        game.debug.body(smallTable);
+        this.game.debug.body(player);
+        this.game.debug.body(desk);
+        this.game.debug.body(lamp);
+        this.game.debug.body(smallTable);
         // game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
-        game.debug.cameraInfo(game.camera, 32, 32);
+        this.game.debug.cameraInfo(this.game.camera, 32, 32);
     },
     start: function () {
 
@@ -222,9 +224,9 @@ var state = {
     },
 
     createPlayer: function () {
-        player = game.add.sprite(150, 320, 'santa');
+        player = this.game.add.sprite(150, 320, 'santa');
         player.scale.setTo(1.3, 1.3); //verkleinert das Playerimage
-        game.physics.enable(player, Phaser.Physics.ARCADE);
+        this.game.physics.enable(player, Phaser.Physics.ARCADE);
         player.body.collideWorldBounds = true;
         player.body.gravity.y = 1000;
         player.body.maxVelocity.y = 1000;
@@ -240,18 +242,9 @@ var state = {
         player.animations.add('standLeft', [35], 1, false);
         player.animations.add('standRight', [34], 1, false);
     }, createFloor: function () {
-        floor = game.add.sprite(0, game.world.height - 50, 'floor');
-        game.physics.enable(floor);
+        floor = this.game.add.sprite(0, this.game.world.height - 50, 'floor');
+        this.game.physics.enable(floor);
         floor.body.collideWorldBounds = true;
         floor.body.immovable = true;
     }
 };
-
-
-var game = new Phaser.Game(
-    800,
-    600,
-    Phaser.CANVAS,
-    document.querySelector('#screen'),
-    state
-);
