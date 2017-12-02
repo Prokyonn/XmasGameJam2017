@@ -7,6 +7,9 @@ var cursors;
 var x_offset = 960;
 var y_offset = 540;
 
+var housePosX =[535.5 , 277.5, 732.0, 1243.0, 1660.5, 394.5, 601.5, 999.0, 1468.5, 1788.0, 87.0, 760.5, 988.5, 1314.0, 1519.5, 1707.0, 493.5, 145.5, 718.5];
+var housePosY =[48.0, 151.5, 114.0, 55.5, 48.0, 324.0, 300.0, 283.5, 237.0, 226.5, 510.0, 520.5, 481.5, 525.0, 531.0, 535.5, 676.5, 829.5, 784.5];
+
 var state = {
     preload: function () {
         this.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
@@ -22,9 +25,11 @@ var state = {
         this.game.add.tileSprite(0, 0, 1920, 1080, 'background');
         this.game.world.setBounds(0, 0, 1920, 1080);
 
-        star = this.game.add.sprite(1200 - x_offset, 600 - y_offset, 'star');
+        var randomnumber = Math.floor(Math.random()*20);
+
+        star = this.game.add.sprite(housePosX[randomnumber], housePosY[randomnumber], 'star');
         this.game.physics.enable(star);
-        star.scale.setTo(1, 1);
+        star.scale.setTo(0.1, 0.1);
         star.anchor.set(0.5);
 
         cursors = game.input.keyboard.createCursorKeys();
