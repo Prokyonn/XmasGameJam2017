@@ -10,28 +10,31 @@ var bg;
 
 var state = {
     preload: function () {
-        game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet-right.png?' + ASSET_VERSION, 150, 150);
-        game.load.image('background', BASE_PATH + 'background2.png?' + ASSET_VERSION);
+        game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
+        game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION);
     },
     create: function () {
         game.physics.startSystem(Phaser.Physics.ARCADE);
-        game.world.setBounds(0, 0, 1400, 600);
+        game.world.setBounds(0, 0, 1920, 600);
 
-        bg = game.add.tileSprite(0, 0, 1400, 600, 'background');
+        bg = game.add.tileSprite(0, 0, 1920, 600, 'background');
 
         game.physics.arcade.gravity.y = 300;
 
         player = game.add.sprite(150, 320, 'santa');
+        player.scale.setTo(1.3, 1.3); //verkleinert das Playerimage
         game.physics.enable(player, Phaser.Physics.ARCADE);
 
         player.body.collideWorldBounds = true;
         player.body.gravity.y = 1000;
-        player.body.maxVelocity.y = 500;
+        player.body.maxVelocity.y = 1000;
         // player.body.setSize(20, 32, 5, 16);
 
-        player.animations.add('left', [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 24, 30, 31, 32], 22, true);
+        player.animations.add('right',
+            [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31], 25, true);
         player.animations.add('turn', [4], 20, true);
-        player.animations.add('right', [0, 1, 2, 3, 8, 9, 10, 11, 16, 17, 18, 19, 25, 26, 27, 28, 29], 22, true);
+        player.animations.add('left',
+            [3, 2, 1, 0, 11, 10, 9, 8, 19, 18, 17, 16, 27, 26, 25, 24], 25, true);
 
         cursors = game.input.keyboard.createCursorKeys();
         jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -47,7 +50,7 @@ var state = {
         player.body.velocity.x = 0;
 
         if (cursors.left.isDown) {
-            player.body.velocity.x = -150;
+            player.body.velocity.x = -300;
 
             if (facing != 'left') {
                 player.animations.play('left');
@@ -55,7 +58,7 @@ var state = {
             }
         }
         else if (cursors.right.isDown) {
-            player.body.velocity.x = 150;
+            player.body.velocity.x = 300;
 
             if (facing != 'right') {
                 player.animations.play('right');
@@ -70,7 +73,7 @@ var state = {
                     player.frame = 0;
                 }
                 else {
-                    player.frame = 5;
+                    player.frame = 4;
                 }
 
                 facing = 'idle';
@@ -78,7 +81,7 @@ var state = {
         }
 
         if (jumpButton.isDown && player.body.onFloor() && game.time.now > jumpTimer) {
-            player.body.velocity.y = -500;
+            player.body.velocity.y = -1000;
             jumpTimer = game.time.now + 750;
         }
 
