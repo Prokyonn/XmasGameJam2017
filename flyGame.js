@@ -18,7 +18,7 @@ flyGame.prototype = {
         this.load.image('star2',BASE_PATH + 'star2.png?' + ASSET_VERSION);
         this.load.image('star3',BASE_PATH + 'star3.png?' + ASSET_VERSION);
         this.load.image('player', BASE_PATH + 'santa.png?' + ASSET_VERSION);
-        this.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);;
+        this.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
         this.load.image('star',BASE_PATH+'HouseStar.png?'+ASSET_VERSION);
     },
     create: function () {
