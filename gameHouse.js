@@ -164,7 +164,7 @@ gameHouse.prototype = {
                 gift = this.spawnGift(player.body.x, player.body.y);
                 player.body.velocity.x = 0;
                 player.body.velocity.y = 0;
-                this.game.time.events.add(5000, this.game.state.start("flyGame"), this);
+                this.game.time.events.add(5000, this.game.state.start("flyGame",true,false,this.score+50,this.minute,this.second+10), this);
             }
         } else {
             if (facing != 'idle') {
@@ -284,8 +284,8 @@ gameHouse.prototype = {
 
 
         }
-        else {
-            this.game.debug.text("Done!", 2, 14, "#0f0");
+        if(this.minute==0 && this.second==0){
+            this.game.state.start("gameOverScreen");
         }
 
     },

@@ -7,15 +7,17 @@
         <script src="titleScreen.js"></script>
         <script src="flyGame.js"></script>
         <script src="gameHouse.js"></script>
+        <script src="gameOverScreen.js"></script>
         <style>
             body{margin:0}
         </style>
         <script>
             (function() {
                 var game = new Phaser.Game(800, 600, Phaser.CANVAS, "game");
-                game.state.add("titleScreen", titleScreen)
+                game.state.add("titleScreen", titleScreen);
                 game.state.add("flyGame", flyGame);
                 game.state.add("gameHouse", gameHouse);
+                game.state.add("gameOverScreen", gameOverScreen);
                 game.state.start("titleScreen",true,false,0,1,30);
             })();
         </script>
