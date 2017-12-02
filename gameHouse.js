@@ -10,7 +10,7 @@ var bg;
 
 var state = {
     preload: function () {
-        game.load.spritesheet('dude', BASE_PATH + 'dude.png?' + ASSET_VERSION, 32, 48);
+        game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet-right.png?' + ASSET_VERSION, 150, 150);
         game.load.image('background', BASE_PATH + 'background2.png?' + ASSET_VERSION);
     },
     create: function () {
@@ -21,25 +21,22 @@ var state = {
 
         game.physics.arcade.gravity.y = 300;
 
-        player = game.add.sprite(32, 320, 'dude');
+        player = game.add.sprite(150, 320, 'santa');
         game.physics.enable(player, Phaser.Physics.ARCADE);
 
         player.body.collideWorldBounds = true;
         player.body.gravity.y = 1000;
         player.body.maxVelocity.y = 500;
-        player.body.setSize(20, 32, 5, 16);
+        // player.body.setSize(20, 32, 5, 16);
 
-        player.animations.add('left', [0, 1, 2, 3], 10, true);
+        player.animations.add('left', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], 22, true);
         player.animations.add('turn', [4], 20, true);
-        player.animations.add('right', [5, 6, 7, 8], 10, true);
+        player.animations.add('right', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], 22, true);
 
         cursors = game.input.keyboard.createCursorKeys();
         jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
 
-        // var sky = game.add.image(0, 0, 'sky');
-        // sky.fixedToCamera = true;
-        // game.camera.follow(player);
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
         cursors = game.input.keyboard.createCursorKeys();
@@ -88,7 +85,8 @@ var state = {
     }, render: function () {
         // game.debug.text(game.time.physicsElapsed, 32, 32);
         // game.debug.body(player);
-        game.debug.bodyInfo(player, 16, 24);
+        // game.debug.bodyInfo(player, 16, 24);
+        game.debug.cameraInfo(game.camera, 32, 32);
     },
     start: function () {
 
