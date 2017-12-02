@@ -1,13 +1,17 @@
 var ASSET_VERSION = (new Date()).getTime();
 var BASE_PATH = 'assets/';
 
-var player;
-var cursors;
+var flyGame = function (game) {
+    console.log("%cStarting my awesome game", "color:white; background:red");
 
-var housePosX =[535.5 , 277.5, 732.0, 1243.0, 1660.5, 394.5, 601.5, 999.0, 1468.5, 1788.0, 87.0, 760.5, 988.5, 1314.0, 1519.5, 1707.0, 493.5, 145.5, 718.5];
-var housePosY =[48.0, 151.5, 114.0, 55.5, 48.0, 324.0, 300.0, 283.5, 237.0, 226.5, 510.0, 520.5, 481.5, 525.0, 531.0, 535.5, 676.5, 829.5, 784.5];
+    player = null;
+    cursors = null;
 
-var state = {
+    housePosX =[535.5 , 277.5, 732.0, 1243.0, 1660.5, 394.5, 601.5, 999.0, 1468.5, 1788.0, 87.0, 760.5, 988.5, 1314.0, 1519.5, 1707.0, 493.5, 145.5, 718.5];
+    housePosY =[48.0, 151.5, 114.0, 55.5, 48.0, 324.0, 300.0, 283.5, 237.0, 226.5, 510.0, 520.5, 481.5, 525.0, 531.0, 535.5, 676.5, 829.5, 784.5];
+}
+
+flyGame.prototype = {
     preload: function () {
         this.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
         this.load.image('star1',BASE_PATH + 'star.png?' + ASSET_VERSION);
@@ -18,13 +22,17 @@ var state = {
         this.load.image('star',BASE_PATH+'HouseStar.png?'+ASSET_VERSION);
     },
     create: function () {
+        this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        this.scale.pageAlignHorizontally = true;
+        //this.scale.setScreenSize();
+
         this.game.physics.startSystem(Phaser.Physics.Arcade);
         this.game.add.tileSprite(0, 0, 1920, 1080, 'background');
         this.game.world.setBounds(0, 0, 1920, 1080);
 
-        cursors = game.input.keyboard.createCursorKeys();
+        cursors = this.game.input.keyboard.createCursorKeys();
 
-        emitter = game.add.emitter(game.world.centerX, game.world.centerY, 400);
+        emitter = this.game.add.emitter(this.game.world.centerX, this.game.world.centerY, 400);
         emitter.makeParticles(['star1', 'star2', 'star3']);
         emitter.gravity = 200;
         emitter.setAlpha(1, 0, 3000);
@@ -37,7 +45,7 @@ var state = {
         star.scale.setTo(0.1, 0.1);
         star.anchor.set(0.5);
 
-        player = this.game.add.sprite(game.world.centerX, game.world.centerY, 'player');
+        player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'player');
         this.game.physics.enable(player);
         player.scale.setTo(0.25, 0.25); //verkleinert das Playerimage
         player.anchor.set(0.5);
@@ -67,12 +75,12 @@ var state = {
 
         if (cursors.up.isDown) {
             emitter.on=true;
-            game.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
+            this.game.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
 
         }
         else if (cursors.down.isDown) {
             emitter.on=true;
-            game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration);
+            this.game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration);
 
         }
         else {
@@ -94,7 +102,7 @@ var state = {
 
     }, render: function () {
        // game.debug.cameraInfo(game.camera, 32, 32);
-        game.debug.spriteInfo(player, 32, 32);
+        this.game.debug.spriteInfo(player, 32, 32);
 
         },
     start: function () {
@@ -109,6 +117,7 @@ var state = {
     }
 };
 
+/*
 var game = new Phaser.Game(
     800,
     600,
@@ -116,3 +125,4 @@ var game = new Phaser.Game(
     document.querySelector("#screen"),
     state
 );
+    */
