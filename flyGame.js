@@ -151,8 +151,8 @@ flyGame.prototype = {
 
 
         }
-        else {
-            this.game.debug.text("Done!", 2, 14, "#0f0");
+        if(this.minute==0 && this.second==0){
+            this.game.state.start("gameOverScreen");
         }
 
     },
