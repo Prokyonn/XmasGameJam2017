@@ -3,8 +3,19 @@
 
 <head>
 
-<title>THE GAME</title>
+<title>Chistmas Impossible</title>
 
+    <script src="//cdn.jsdelivr.net/npm/phaser-ce@2.9.2/build/phaser.js"></script>
+    <script src="game.js"></script>
+
+    <script>
+        (function() {
+            var game = new Phaser.Game(320, 480, Phaser.CANVAS, "game");
+            game.state.add("game",game);
+
+            game.state.start("game");
+        })();
+    </script>
 
 <style>
 body {
@@ -28,9 +39,6 @@ body {
 <div id="screen-saver">
 <div id="screen"></div>
 </div>
-
-<script src="//cdn.jsdelivr.net/npm/phaser-ce@2.9.2/build/phaser.js"></script>
-<script src="gameHouse.js"></script>
 
 </body>
 

@@ -6,19 +6,19 @@ var cursors;
 
 var state = {
     preload: function () {
-        game.load.image('background', BASE_PATH + 'debug-grid-1920x1920.png?' + ASSET_VERSION);
+        game.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
         game.load.image('player', BASE_PATH + 'santa.png?' + ASSET_VERSION);
     },
     create: function () {
 
-        game.add.tileSprite(0, 0, 1920, 1920, 'background');
+        game.add.tileSprite(0, 0, 1920, 1080, 'background');
 
-        game.world.setBounds(0, 0, 1920, 1920);
+        game.world.setBounds(0, 0, 1920, 1080);
 
         game.physics.startSystem(Phaser.Physics.P2JS);
 
         player = game.add.sprite(game.world.centerX, game.world.centerY, 'player');
-        player.scale.setTo(0.3, 0.3); //verkleinert das Playerimage
+        player.scale.setTo(0.25, 0.25); //verkleinert das Playerimage
         player.anchor.set(0.5);
 
         game.physics.arcade.enable(player);
@@ -41,35 +41,11 @@ var state = {
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
     },
     update: function () {
-        // player.body.velocity.x = 0;
-        // player.body.velocity.y = 0;
-        // player.body.angularVelocity = 0;
-        //
-        // if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-        //     player.body.angularVelocity = -300;
-        // }else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-        //     player.body.angularVelocity = 300;
-        // }else {
-        //     player.body.angularVelocity = 0;
-        // }
-        //
-        // if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
-        //     //game.physics.arcade.velocityFromAngle(player.angle, 500, player.body.velocity);
-        //     game.physics.arcade.accelerationFromRotation(player.rotation, 20000, player.body.acceleration);
-        // }else {
-        //     player.body.acceleration.set(0);
-        // }
-
         if (cursors.up.isDown) {
             game.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
         }
         else if (cursors.down.isDown) {
             game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration);
-            // if(player.body.acceleration.get() > 100) {
-            //     game.physics.arcade.accelerationFromRotation(player.rotation, -100, player.body.acceleration);
-            // }else if (player.body.acceleration.get() > 0) {
-            //     game.physics.arcade.accelerationFromRotation(player.rotation, -1, player.body.acceleration);
-            // }
         }
         else {
             player.body.acceleration.set(0);
@@ -87,7 +63,8 @@ var state = {
 
 
     }, render: function () {
-        game.debug.cameraInfo(game.camera, 32, 32);
+       // game.debug.cameraInfo(game.camera, 32, 32);
+        game.debug.spriteInfo(player, 32, 32);
 
     },
     start: function () {
