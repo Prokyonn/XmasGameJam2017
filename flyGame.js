@@ -26,6 +26,7 @@ flyGame.prototype = {
         }else {
             this.score = score;
         }
+        
     },
     preload: function () {
         this.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
@@ -52,7 +53,7 @@ flyGame.prototype = {
         emitter.makeParticles(['star1', 'star2', 'star3', 'glitter']);
         emitter.gravity = 200;
         emitter.setAlpha(1, 0, 3000);
-        emitter.setScale(0.8, 0, 0.8, 0, 3000);
+        emitter.setScale(0.4, 0, 0.4, 0, 3000);
         emitter.start(false, 3000, 5);
 
         var randomnumber = Math.floor(Math.random() * 20);
