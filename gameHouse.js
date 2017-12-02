@@ -72,9 +72,17 @@ gameHouse.prototype = {
         this.spawnLamp(450, 15, 1.5, 1.5);
 
         this.glasses = this.add.group();
-        this.spawnGlass(50, 52);
-        this.spawnGlass(30, 52);
-        this.spawnGlass(-180, 52);
+        x1 = this.getRandomInt(-180, 180);
+        x2 = this.getRandomInt(-180, 180);
+        x3 = this.getRandomInt(-180, 180);
+
+        this.spawnGlass(x1, 52);
+        this.spawnGlass(x2, 52);
+        this.spawnGlass(x3, 52);
+
+        // this.spawnGlass(50, 52);
+        // this.spawnGlass(30, 52);
+        // this.spawnGlass(-180, 52);
         this.spawnGlass(-670, 52);
 
         this.cats = this.add.group();
@@ -188,6 +196,11 @@ gameHouse.prototype = {
             }
         }
     },
+
+    getRandomInt: function (min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+
     spawnDesk: function (x, y) {
         desk = this.desks.create(
             this.game.width - x,
@@ -211,7 +224,7 @@ gameHouse.prototype = {
 
         lamp.body.immovable = true;
         lamp.body.moves = false;
-        lamp.body.setSize(80, 125, 26, 0);
+        lamp.body.setSize(50, 125, 35, 0);
         lamp.anchor.setTo(0.5, 0.9);
         lamp.scale.setTo(scaleX, scaleY);
     },
@@ -272,9 +285,9 @@ gameHouse.prototype = {
 
     render: function () {
         // game.debug.text(game.time.physicsElapsed, 32, 32);
-        // this.game.debug.body(player);
+        this.game.debug.body(player);
         // this.game.debug.body(desk);
-        // this.game.debug.body(lamp);
+        this.game.debug.body(lamp);
         // game.debug.body(smallTable);
         // game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
@@ -352,7 +365,7 @@ gameHouse.prototype = {
         player.body.collideWorldBounds = true;
         player.body.gravity.y = 1000;
         player.body.maxVelocity.y = 1000;
-        player.body.setSize(92, 120, 20, 13);
+        player.body.setSize(80, 120, 35, 13);
 
         player.animations.add('right',
             [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31], 25, true);
