@@ -4,6 +4,18 @@ var BASE_PATH = 'assets/';
 var player;
 var cursors;
 
+var bmd;
+var circle;
+
+var colors;
+var i = 0;
+var p = null;
+
+var x_offset = 960;
+var y_offset = 540;
+
+var objectCollide;
+
 var state = {
     preload: function () {
         game.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
@@ -39,6 +51,42 @@ var state = {
         //  0.1 is the amount of linear interpolation to use.
         //  The smaller the value, the smooth the camera (and the longer it takes to catch up)
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+
+        //circles
+
+        colors = Phaser.Color.HSVColorWheel();
+
+        //  Create a Circle
+        circle = new Phaser.Circle(game.world.centerX, game.world.centerY, 30);
+
+        //  Create a BitmapData just to plot Circle points to
+        bmd = game.add.bitmapData(game.width, game.height);
+        bmd.addToWorld();
+
+        //  And display our circle on the top
+        var graphics = game.add.graphics(1200 - x_offset, 600 - y_offset);
+        graphics.lineStyle(1, 0xFF69B4, 1);
+        graphics.beginFill(0xFF69B4, 1);
+        graphics.drawCircle(circle.x, circle.y, circle.diameter);
+
+        p = new Phaser.Point();
+
+
+        //test
+        this.scoreText = this.add.text(
+            this.world.width / 2,
+            this.world.height / 3,
+            "",
+            {
+                fill: '#ffdd00',
+                align: 'center'
+            }
+        );
+        this.scoreText.anchor.setTo(0.5, 0.5);
+        this.scoreText.fontSize = 20;
+        this.reset();
+
+
     },
     update: function () {
         if (cursors.up.isDown) {
@@ -60,6 +108,23 @@ var state = {
         else {
             player.body.angularVelocity = 0;
         }
+
+
+        //circles
+        for (var c = 0; c < 10; c++)
+        {
+            circle.random(p);
+
+            //  We'll floor it as setPixel needs integer values and random returns floats
+            p.floor();
+
+            bmd.setPixel(p.x, p.y, colors[i].r, colors[i].g, colors[i].b);
+        }
+
+        i = game.math.wrapValue(i, 1, 359);
+
+        objectCollide = game.physics.arcade.collide(player, this.circle);
+        this.game.physics.arcade.overlap(player, this.circle, this.killByCircle, null, this);
 
 
     }, render: function () {
@@ -97,14 +162,13 @@ var state = {
         }, this);
         move.start();
 
-    },
-    // setGameOver: function () {
-    //     this.timeOver = this.game.time.now;
-    //     this.gameOver = true;
-    //
-    //     this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
-    // }
+    }, killByCircle: function(player, circle) {
+        this.setGameOver();
 
+
+    }, setGameOver: function () {
+        this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
+    },
 };
 
 
