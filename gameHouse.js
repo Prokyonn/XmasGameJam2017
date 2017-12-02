@@ -41,15 +41,15 @@ var state = {
         this.spawnDesk(200, 100);
 
         this.lamps = this.add.group();
-        this.spawnLamp(150, 180);
+        this.spawnLamp(150, 66);
 
         this.smallTables = this.add.group();
         this.spawnSmallTable(400, 100);
 
         this.glasses = this.add.group();
-        this.spawnGlass(50, 110);
-        this.spawnGlass(20, 110);
-        this.spawnGlass(0, 110);
+        this.spawnGlass(50, 52);
+        this.spawnGlass(20, 52);
+        this.spawnGlass(0, 52);
 
         this.hints = this.add.group();
 
@@ -67,10 +67,16 @@ var state = {
 
         player.body.velocity.x = 0;
 
+
+        if (this.gameOver) {
+            this.showHint(player, "FUCK! I woke them up.");
+            this.reset();
+        }
+
         if (cursors.left.isDown) {
             player.body.velocity.x = -300;
 
-            if (facing != 'left') {
+            if (player.body.touching.down) {
                 player.animations.play('left');
                 facing = 'left';
             }
@@ -78,24 +84,17 @@ var state = {
         else if (cursors.right.isDown) {
             player.body.velocity.x = 300;
 
-            if (facing != 'right') {
+            if (player.body.touching.down) {
                 player.animations.play('right');
                 facing = 'right';
             }
-        }
-        else if (this.gameOver) {
-            // this.showHint(player, "FUCK! I woke them up.");
-            this.reset();
-        }
-        else {
+        } else {
             if (facing != 'idle') {
-                player.animations.stop();
-
                 if (facing == 'left') {
-                    player.frame = 0;
+                    player.animations.play('standLeft');
                 }
                 else {
-                    player.frame = 7;
+                    player.animations.play('standRight');
                 }
                 facing = 'idle';
             }
@@ -104,9 +103,12 @@ var state = {
         if (jumpButton.isDown && player.body.touching.down && game.time.now > jumpTimer) {
             player.body.velocity.y = -1000;
             jumpTimer = game.time.now + 750;
-            player.animations.play('jump');
+            if (facing == 'left') {
+                player.animations.play('jumpLeft');
+            } else {
+                player.animations.play('jumpRight');
+            }
         }
-
     },
     spawnDesk: function (x, y) {
         desk = this.desks.create(
@@ -132,6 +134,7 @@ var state = {
         lamp.body.immovable = true;
         lamp.body.moves = false;
         lamp.body.setSize(80, 125, 26, 0);
+        lamp.anchor.setTo(0.5, 0.9);
         //lamp.scale.setTo(0, 0);
     },
     spawnGlass: function (x, y) {
@@ -146,9 +149,10 @@ var state = {
         glass.body.moves = false;
         glass.body.setSize(80, 125, 26, 0);
         glass.scale.setTo(0.5, 0.5);
+        glass.anchor.setTo(0.5, 0.9);
     },
 
-    spawnSmallTable: function(x, y) {
+    spawnSmallTable: function (x, y) {
         smallTable = this.smallTables.create(
             game.width - x,
             floor.body.top - y,
@@ -179,7 +183,10 @@ var state = {
         this.gameOver = false;
     },
     killedByObject: function (player, object) {
-        // object.body.rotate += 90;
+        if (facing == 'left')
+            object.angle = -90;
+        else
+            object.angle = 90;
         this.setGameOver();
     },
     addScore: function (addWhat) {
@@ -228,11 +235,11 @@ var state = {
         player.animations.add('turn', [4], 20, true);
         player.animations.add('left',
             [3, 2, 1, 0, 11, 10, 9, 8, 19, 18, 17, 16, 27, 26, 25, 24], 25, true);
-        // player.animations.jump('jumpLeft',[4], 1, false);
-        // player.animations.jump('jumpRight',[4], 1, false);
-    },
-
-    createFloor: function(){
+        player.animations.add('jumpLeft', [33], 1, false);
+        player.animations.add('jumpRight', [32], 1, false);
+        player.animations.add('standLeft', [35], 1, false);
+        player.animations.add('standRight', [34], 1, false);
+    }, createFloor: function () {
         floor = game.add.sprite(0, game.world.height - 50, 'floor');
         game.physics.enable(floor);
         floor.body.collideWorldBounds = true;
