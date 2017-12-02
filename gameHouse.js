@@ -10,6 +10,7 @@ var jumpButton;
 var bg;
 var desk;
 var lamp;
+var glass;
 
 var state = {
     preload: function () {
@@ -18,7 +19,7 @@ var state = {
         game.load.image("desk", BASE_PATH + "desk.png?" + ASSET_VERSION);
         game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
         game.load.image("lamp", BASE_PATH + "lamp.png?" + ASSET_VERSION);
-        game.load.image("glas", BASE_PATH + "glas.png?" + ASSET_VERSION);
+        game.load.image("glass", BASE_PATH + "glas.png?" + ASSET_VERSION);
     },
     create: function () {
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -53,10 +54,13 @@ var state = {
         jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
         this.desks = this.add.group();
-        this.spawnDesk();
+        this.spawnDesk(200, 100);
 
         this.lamps = this.add.group();
-        this.spawnLamp();
+        this.spawnLamp(150, 180);
+
+        this.glasses = this.add.group();
+        this.spawnGlass(50, 110);
 
         this.hints = this.add.group();
 
@@ -112,10 +116,10 @@ var state = {
         }
 
     },
-    spawnDesk: function () {
+    spawnDesk: function (x, y) {
         desk = this.desks.create(
-            game.width - 200,
-            floor.body.top - 100,
+            game.width - x,
+            floor.body.top - y,
             'desk'
         );
         game.physics.arcade.enable(desk);
@@ -125,10 +129,10 @@ var state = {
         desk.body.setSize(700, 133, 0, 90);
         desk.scale.setTo(0.5, 0.5);
     },
-    spawnLamp: function () {
+    spawnLamp: function (x, y) {
         lamp = this.lamps.create(
-            game.width - 150,
-            floor.body.top - 180,
+            game.width - x,
+            floor.body.top - y,
             'lamp'
         );
         game.physics.arcade.enable(lamp);
@@ -138,12 +142,26 @@ var state = {
         lamp.body.setSize(80, 125, 26, 0);
         //lamp.scale.setTo(0, 0);
     },
+    spawnGlass: function (x, y) {
+        glass = this.glasses.create(
+            game.width - x,
+            floor.body.top - y,
+            'glass'
+        );
+        game.physics.arcade.enable(glass);
+
+        glass.body.immovable = true;
+        glass.body.moves = false;
+        glass.body.setSize(80, 125, 26, 0);
+        glass.scale.setTo(0.5, 0.5);
+    },
 
     render: function () {
         // game.debug.text(game.time.physicsElapsed, 32, 32);
         game.debug.body(player);
         game.debug.body(desk);
         game.debug.body(lamp);
+        game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
         game.debug.cameraInfo(game.camera, 32, 32);
     },
