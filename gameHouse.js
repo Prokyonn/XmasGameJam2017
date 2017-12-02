@@ -32,7 +32,7 @@ var state = {
         player.body.collideWorldBounds = true;
         player.body.gravity.y = 1000;
         player.body.maxVelocity.y = 1000;
-        player.body.setSize(120, 133, 20, 0);
+        player.body.setSize(92, 120, 20, 13);
 
         player.animations.add('right',
             [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31], 25, true);
