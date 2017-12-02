@@ -29,9 +29,9 @@ var state = {
         player.body.maxVelocity.y = 500;
         // player.body.setSize(20, 32, 5, 16);
 
-        player.animations.add('left', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], 22, true);
+        player.animations.add('left', [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 24, 30, 31, 32], 22, true);
         player.animations.add('turn', [4], 20, true);
-        player.animations.add('right', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], 22, true);
+        player.animations.add('right', [0, 1, 2, 3, 8, 9, 10, 11, 16, 17, 18, 19, 25, 26, 27, 28, 29], 22, true);
 
         cursors = game.input.keyboard.createCursorKeys();
         jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
