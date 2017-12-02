@@ -41,10 +41,11 @@ var state = {
         this.spawnDesk(200, 100);
 
         this.lamps = this.add.group();
-        this.spawnLamp(150, 66);
+        this.spawnLamp(150, 66, 1, 1);
+        this.spawnLamp(450, 15, 1.5, 1.5);
 
         this.smallTables = this.add.group();
-        this.spawnSmallTable(400, 100);
+        // this.spawnSmallTable(400, 100);
 
         this.glasses = this.add.group();
         this.spawnGlass(50, 52);
@@ -61,9 +62,15 @@ var state = {
         game.physics.arcade.collide(player, this.desks);
         game.physics.arcade.collide(floor, this.desks);
         game.physics.arcade.collide(player, floor);
+
         game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
+        game.physics.arcade.collide(player, this.lamps);
+
         game.physics.arcade.overlap(player, this.glasses, this.killedByObject, null, this);
+        game.physics.arcade.collide(player, this.glasses);
+
         game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
+        game.physics.arcade.overlap(player, this.lamps);
 
         player.body.velocity.x = 0;
 
@@ -123,7 +130,7 @@ var state = {
         desk.body.setSize(700, 133, 0, 90);
         desk.scale.setTo(0.5, 0.5);
     },
-    spawnLamp: function (x, y) {
+    spawnLamp: function (x, y, scaleX, scaleY) {
         lamp = this.lamps.create(
             game.width - x,
             floor.body.top - y,
@@ -135,7 +142,7 @@ var state = {
         lamp.body.moves = false;
         lamp.body.setSize(80, 125, 26, 0);
         lamp.anchor.setTo(0.5, 0.9);
-        //lamp.scale.setTo(0, 0);
+        lamp.scale.setTo(scaleX, scaleY);
     },
     spawnGlass: function (x, y) {
         glass = this.glasses.create(
@@ -170,7 +177,7 @@ var state = {
         game.debug.body(player);
         game.debug.body(desk);
         game.debug.body(lamp);
-        game.debug.body(smallTable);
+        // game.debug.body(smallTable);
         // game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
         game.debug.cameraInfo(game.camera, 32, 32);
@@ -222,7 +229,7 @@ var state = {
     },
 
     createPlayer: function () {
-        player = game.add.sprite(150, 320, 'santa');
+        player = game.add.sprite(100, 320, 'santa');
         player.scale.setTo(1.3, 1.3); //verkleinert das Playerimage
         game.physics.enable(player, Phaser.Physics.ARCADE);
         player.body.collideWorldBounds = true;
@@ -239,7 +246,9 @@ var state = {
         player.animations.add('jumpRight', [32], 1, false);
         player.animations.add('standLeft', [35], 1, false);
         player.animations.add('standRight', [34], 1, false);
-    }, createFloor: function () {
+    },
+
+    createFloor: function () {
         floor = game.add.sprite(0, game.world.height - 50, 'floor');
         game.physics.enable(floor);
         floor.body.collideWorldBounds = true;
