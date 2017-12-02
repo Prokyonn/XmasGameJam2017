@@ -12,8 +12,8 @@ var bg;
 var state = {
     preload: function () {
         game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
-        game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION);
-        game.load.image("chimney", BASE_PATH + "chimney.png?" + ASSET_VERSION);
+        game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION, 24, 96);
+        game.load.image("desk", BASE_PATH + "desk.png?" + ASSET_VERSION);
         game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
     },
     create: function () {
@@ -49,8 +49,11 @@ var state = {
         cursors = game.input.keyboard.createCursorKeys();
         jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
-        this.chimneys = this.add.group();
-        this.spawnChimney();
+        this.desks = this.add.group();
+        this.spawnDesk();
+
+
+        this.hints = this.add.group();
 
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
@@ -58,9 +61,9 @@ var state = {
     },
     update: function () {
         game.physics.arcade.collide(player, floor);
-        game.physics.arcade.collide(floor, this.chimneys);
-        game.physics.arcade.overlap(player, this.chimneys, this.killedByChimney, null, this);
-        game.physics.arcade.collide(player, this.chimneys);
+        game.physics.arcade.collide(floor, this.desks);
+        //game.physics.arcade.overlap(player, this.tables, this.killedByChimney, null, this);
+        game.physics.arcade.collide(player, this.desks);
 
         player.body.velocity.x = 0;
 
@@ -81,7 +84,8 @@ var state = {
             }
         }
         else if (this.gameOver) {
-            this.showHint(player, "FUCK! I woke them up.")
+            this.showHint(player, "FUCK! I woke them up.");
+            this.reset();
         }
         else {
             if (facing != 'idle') {
@@ -104,15 +108,21 @@ var state = {
         }
 
     },
-    spawnChimney: function () {
-        var chimney = this.chimneys.create(
-            game.width - 24,
-            floor.body.top - 96,
-            'chimney'
+    spawnDesk: function () {
+        var desk = this.desks.create(
+            game.width - 200,
+            floor.body.top - 200,
+            'desk'
         );
-        this.game.physics.arcade.enable(chimney);
-        chimney.body.velocity.x = 0;
-    }, render: function () {
+        game.physics.arcade.enable(desk);
+        desk.body.setSize(775, 113);
+        desk.body.moves = false;
+        desk.body.velocity.x = 0;
+       // desk.body.setSize(150, 133, 0, 0);
+
+    },
+
+    render: function () {
         // game.debug.text(game.time.physicsElapsed, 32, 32);
         // game.debug.body(player);
         // game.debug.bodyInfo(player, 16, 24);
@@ -122,13 +132,14 @@ var state = {
 
     },
     reset: function () {
-
+        this.gameStarted = false;
+        this.gameOver = false;
     },
     killedByChimney: function (player, chimney) {
         chimney.body.velocity.x = 0;
         chimney.body.velocity.y = 0;
-        this.showHint(player, "FUCK! I woke them up.")
-        // this.setGameOver();
+       // this.showHint(player, "FUCK! I woke them up.");
+        this.setGameOver();
     },
     addScore: function (addWhat) {
         this.score += addWhat;
