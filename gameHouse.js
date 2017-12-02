@@ -55,7 +55,7 @@ gameHouse.prototype = {
         this.createFloor();
 
         this.smallTables = this.add.group();
-        this.spawnSmallTable(-450, 120);
+        this.spawnSmallTable(-550, 120);
 
         this.createPlayer();
 
@@ -73,6 +73,7 @@ gameHouse.prototype = {
         this.spawnGlass(50, 52);
         this.spawnGlass(30, 52);
         this.spawnGlass(-180, 52);
+        this.spawnGlass(-670, 52);
 
         this.cats = this.add.group();
         this.spawnCat(-400, -15);
@@ -268,9 +269,9 @@ gameHouse.prototype = {
 
     render: function () {
         // game.debug.text(game.time.physicsElapsed, 32, 32);
-        this.game.debug.body(player);
-        this.game.debug.body(desk);
-        this.game.debug.body(lamp);
+        // this.game.debug.body(player);
+        // this.game.debug.body(desk);
+        // this.game.debug.body(lamp);
         // game.debug.body(smallTable);
         // game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
