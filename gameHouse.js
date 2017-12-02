@@ -9,6 +9,7 @@ var floor;
 var jumpButton;
 var bg;
 var desk;
+var lamp;
 
 var state = {
     preload: function () {
@@ -16,6 +17,8 @@ var state = {
         game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION, 24, 96);
         game.load.image("desk", BASE_PATH + "desk.png?" + ASSET_VERSION);
         game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
+        game.load.image("lamp", BASE_PATH + "lamp.png?" + ASSET_VERSION);
+        game.load.image("glas", BASE_PATH + "glas.png?" + ASSET_VERSION);
     },
     create: function () {
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -27,7 +30,7 @@ var state = {
 
         this.createPlayer();
         player = game.add.sprite(150, 320, 'santa');
-        player.scale.setTo(1.3, 1.3); //verkleinert das Playerimage
+        player.scale.setTo(1.3, 1.3);
         game.physics.enable(player, Phaser.Physics.ARCADE);
         player.body.collideWorldBounds = true;
         player.body.gravity.y = 1000;
@@ -52,6 +55,8 @@ var state = {
         this.desks = this.add.group();
         this.spawnDesk();
 
+        this.lamps = this.add.group();
+        this.spawnLamp();
 
         this.hints = this.add.group();
 
@@ -60,11 +65,10 @@ var state = {
         cursors = game.input.keyboard.createCursorKeys();
     },
     update: function () {
-        game.physics.arcade.collide(player, floor);
-        game.physics.arcade.collide(floor, this.desks);
-        //game.physics.arcade.overlap(player, this.tables, this.killedByChimney, null, this);
         game.physics.arcade.collide(player, this.desks);
-        game.physics.arcade.overlap(player, this.desks, this.killedByChimney, null, this);
+        game.physics.arcade.collide(floor, this.desks);
+        game.physics.arcade.collide(player, floor);
+        game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
 
         player.body.velocity.x = 0;
 
@@ -121,11 +125,25 @@ var state = {
         desk.body.setSize(700, 133, 0, 90);
         desk.scale.setTo(0.5, 0.5);
     },
+    spawnLamp: function () {
+        lamp = this.lamps.create(
+            game.width - 150,
+            floor.body.top - 180,
+            'lamp'
+        );
+        game.physics.arcade.enable(lamp);
+
+        lamp.body.immovable = true;
+        lamp.body.moves = false;
+        lamp.body.setSize(80, 125, 26, 0);
+        //lamp.scale.setTo(0, 0);
+    },
 
     render: function () {
         // game.debug.text(game.time.physicsElapsed, 32, 32);
         game.debug.body(player);
         game.debug.body(desk);
+        game.debug.body(lamp);
         // game.debug.bodyInfo(player, 16, 24);
         game.debug.cameraInfo(game.camera, 32, 32);
     },
@@ -136,10 +154,7 @@ var state = {
         this.gameStarted = false;
         this.gameOver = false;
     },
-    killedByChimney: function (player, chimney) {
-        chimney.body.velocity.x = 0;
-        chimney.body.velocity.y = 0;
-        this.showHint(player, "FUCK! I woke them up.");
+    killedByObject: function (player, chimney) {
         this.setGameOver();
     },
     addScore: function (addWhat) {
@@ -168,7 +183,6 @@ var state = {
 
     },
     setGameOver: function () {
-        // this.timeOver = this.game.time.now;
         this.gameOver = true;
 
         // this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
