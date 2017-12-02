@@ -12,7 +12,8 @@ var state = {
     preload: function () {
         game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
         game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION);
-        game.load.image("chimney", BASE_PATH + "chimney.png")
+        game.load.image("chimney", BASE_PATH + "chimney.png?" + ASSET_VERSION);
+        game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
     },
     create: function () {
         game.physics.startSystem(Phaser.Physics.ARCADE);
