@@ -55,11 +55,40 @@ gameHouse.prototype = {
 
         this.hints = this.add.group();
 
+        this.scoreText = this.add.text(900, 100,
+            "",
+            {
+                fill: '#2aff4d',
+                align: 'center'
+            }
+        );
+        this.scoreText.anchor.setTo(0.5, 0.5);
+        this.scoreText.fontSize = 20;
+        this.scoreText.fixedToCamera = true;
+        this.scoreText.cameraOffset.setTo(700, 20);
+
+        this.timeText = this.add.text(900, 100,
+            "",
+            {
+                fill: '#2aff4d',
+                align: 'center'
+            }
+        );
+        this.timeText.anchor.setTo(0.5, 0.5);
+        this.timeText.fontSize = 20;
+        this.timeText.fixedToCamera = true;
+        this.timeText.cameraOffset.setTo(550, 20);
+
+        timer = this.game.time.create();
+        timerEvent = timer.add(Phaser.Timer.MINUTE * 1 + Phaser.Timer.SECOND * 30, this.endTimer, this);
+
+
         this.game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
         cursors = this.game.input.keyboard.createCursorKeys();
     },
     update: function () {
+        this.start();
         this.game.physics.arcade.collide(player, this.desks);
         this.game.physics.arcade.collide(floor, this.desks);
         this.game.physics.arcade.collide(player, floor);
@@ -176,8 +205,26 @@ gameHouse.prototype = {
         // game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
         this.game.debug.cameraInfo(this.game.camera, 32, 32);
+        if (timer.running) {
+            this.timeText.setText("Time:" + this.formatTime(Math.round((timerEvent.delay - timer.ms) / 1000)));
+
+
+        }
+        else {
+            this.game.debug.text("Done!", 2, 14, "#0f0");
+        }
+
+    },
+    formatTime: function (s) {
+        // Convert seconds (s) to a nicely formatted and padded time string
+        var minutes = "0" + Math.floor(s / 60);
+        var seconds = "0" + (s - minutes * 60);
+        return minutes.substr(-2) + ":" + seconds.substr(-2);
     },
     start: function () {
+        this.score = 0;
+        this.scoreText.setText("SCORE: " + this.score);
+        timer.start();
 
     },
     reset: function () {

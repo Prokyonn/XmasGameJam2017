@@ -82,7 +82,6 @@ flyGame.prototype = {
             timerEvent = timer.add(Phaser.Timer.MINUTE * 1 + Phaser.Timer.SECOND * 30, this.endTimer, this);
 
 
-            timer.start();
 
             this.game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
@@ -152,7 +151,7 @@ flyGame.prototype = {
         start: function () {
             this.score = 0;
             this.scoreText.setText("SCORE: " + this.score);
-            this.time = "01:00";
+            timer.start();
 
 
         }
