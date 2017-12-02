@@ -4,9 +4,6 @@ var BASE_PATH = 'assets/';
 var player;
 var cursors;
 
-var x_offset = 960;
-var y_offset = 540;
-
 var state = {
     preload: function () {
         this.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
@@ -21,11 +18,6 @@ var state = {
         this.game.physics.startSystem(Phaser.Physics.Arcade);
         this.game.add.tileSprite(0, 0, 1920, 1080, 'background');
         this.game.world.setBounds(0, 0, 1920, 1080);
-
-        star = this.game.add.sprite(1200 - x_offset, 600 - y_offset, 'star');
-        this.game.physics.enable(star);
-        star.scale.setTo(1, 1);
-        star.anchor.set(0.5);
 
         cursors = game.input.keyboard.createCursorKeys();
 
@@ -43,6 +35,11 @@ var state = {
         player.body.fixedRotation = true;
         player.body.collideWorldBounds = true;
         player.body.drag.set(50);
+
+        star = this.game.add.sprite(1200, 600, 'star');
+        this.game.physics.enable(star);
+        star.scale.setTo(0.1, 0.1);
+        star.anchor.set(0.5);
 
         //  Notice that the sprite doesn't have any momentum at all,
         //  it's all just set by the camera follow type.
@@ -89,7 +86,6 @@ var state = {
         }
         else {
             player.body.angularVelocity = 0;
-            emitter.on=false;
         }
 
     }, render: function () {
@@ -105,6 +101,7 @@ var state = {
     },
     killByCircle: function(player, star) {
         star.kill();
+        this.game.state.start("gameHouse");
     }
 };
 
