@@ -29,25 +29,8 @@ var state = {
         game.physics.arcade.gravity.y = 300;
 
         this.createPlayer();
-        player = game.add.sprite(150, 320, 'santa');
-        player.scale.setTo(1.3, 1.3);
-        game.physics.enable(player, Phaser.Physics.ARCADE);
-        player.body.collideWorldBounds = true;
-        player.body.gravity.y = 1000;
-        player.body.maxVelocity.y = 1000;
-        player.body.setSize(92, 120, 20, 13);
+        this.createFloor();
 
-        player.animations.add('right',
-            [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31], 25, true);
-        player.animations.add('turn', [4], 20, true);
-        player.animations.add('left',
-            [3, 2, 1, 0, 11, 10, 9, 8, 19, 18, 17, 16, 27, 26, 25, 24], 25, true);
-
-
-        floor = game.add.sprite(0, game.world.height - 50, 'floor');
-        game.physics.enable(floor);
-        floor.body.collideWorldBounds = true;
-        floor.body.immovable = true;
 
         cursors = game.input.keyboard.createCursorKeys();
         jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -109,6 +92,7 @@ var state = {
         if (jumpButton.isDown && player.body.touching.down && game.time.now > jumpTimer) {
             player.body.velocity.y = -1000;
             jumpTimer = game.time.now + 750;
+            player.animations.play('jump');
         }
 
     },
@@ -154,7 +138,8 @@ var state = {
         this.gameStarted = false;
         this.gameOver = false;
     },
-    killedByObject: function (player, chimney) {
+    killedByObject: function (player, object) {
+        // object.body.rotate += 90;
         this.setGameOver();
     },
     addScore: function (addWhat) {
@@ -187,7 +172,26 @@ var state = {
 
         // this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
     }, createPlayer: function () {
+        player = game.add.sprite(150, 320, 'santa');
+        player.scale.setTo(1.3, 1.3); //verkleinert das Playerimage
+        game.physics.enable(player, Phaser.Physics.ARCADE);
+        player.body.collideWorldBounds = true;
+        player.body.gravity.y = 1000;
+        player.body.maxVelocity.y = 1000;
+        player.body.setSize(92, 120, 20, 13);
 
+        player.animations.add('right',
+            [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31], 25, true);
+        player.animations.add('turn', [4], 20, true);
+        player.animations.add('left',
+            [3, 2, 1, 0, 11, 10, 9, 8, 19, 18, 17, 16, 27, 26, 25, 24], 25, true);
+        // player.animations.jump('jumpLeft',[4], 1, false);
+        // player.animations.jump('jumpRight',[4], 1, false);
+    }, createFloor: function(){
+        floor = game.add.sprite(0, game.world.height - 50, 'floor');
+        game.physics.enable(floor);
+        floor.body.collideWorldBounds = true;
+        floor.body.immovable = true;
     }
 };
 
