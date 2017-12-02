@@ -12,6 +12,7 @@ var desk;
 var lamp;
 var glass;
 var smallTable;
+var gift;
 
 var state = {
     preload: function () {
@@ -22,6 +23,7 @@ var state = {
         game.load.image("lamp", BASE_PATH + "lamp.png?" + ASSET_VERSION);
         game.load.image("glass", BASE_PATH + "glas.png?" + ASSET_VERSION);
         game.load.image("smallTable", BASE_PATH + "tischKlein.png?" + ASSET_VERSION);
+        game.load.image("gift", BASE_PATH + "gift.png?" + ASSET_VERSION);
     },
     create: function () {
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -95,6 +97,10 @@ var state = {
                 player.animations.play('right');
                 facing = 'right';
             }
+        } else if (cursors.down.isDown) {
+            if (gift != undefined)
+                gift.kill();
+            gift = this.spawnGift(player.body.x + 450, player.body.y - 150);
         } else {
             if (facing != 'idle') {
                 if (facing == 'left') {
@@ -167,6 +173,17 @@ var state = {
         );
         game.physics.arcade.enable(smallTable);
 
+        smallTable.body.immovable = true;
+        smallTable.body.moves = false;
+        smallTable.body.setSize(100, 100, 26, 0);
+    },
+    spawnGift: function (x, y) {
+        smallTable = this.smallTables.create(
+            game.width - x,
+            floor.body.top - y,
+            'gift'
+        );
+        game.physics.arcade.enable(smallTable);
         smallTable.body.immovable = true;
         smallTable.body.moves = false;
         smallTable.body.setSize(100, 100, 26, 0);
