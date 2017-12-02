@@ -19,6 +19,9 @@ var objectCollide;
 var state = {
     preload: function () {
         game.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
+        game.load.image('star1',BASE_PATH + 'assets/star.png?' + ASSET_VERSION);
+        game.load.image('star2',BASE_PATH + 'assets/star2.png?' + ASSET_VERSION);
+        game.load.image('star3',BASE_PATH + 'assets/star3.png?' + ASSET_VERSION);
         game.load.image('player', BASE_PATH + 'santa.png?' + ASSET_VERSION);
     },
     create: function () {
@@ -27,7 +30,18 @@ var state = {
 
         game.world.setBounds(0, 0, 1920, 1080);
 
-        game.physics.startSystem(Phaser.Physics.P2JS);
+        game.physics.startSystem(Phaser.Physics.Arcade);
+
+        emitter = game.add.emitter(game.world.centerX, game.world.centerY, 400);
+
+        emitter.makeParticles(['star1', 'star2', 'star3']);
+
+        emitter.gravity = 200;
+        emitter.setAlpha(1, 0, 3000);
+        emitter.setScale(0.8, 0, 0.8, 0, 3000);
+        emitter.start(false, 3000, 5);
+        
+
 
         player = game.add.sprite(game.world.centerX, game.world.centerY, 'player');
         player.scale.setTo(0.25, 0.25); //verkleinert das Playerimage
@@ -89,24 +103,43 @@ var state = {
 
     },
     update: function () {
+        var px = player.body.velocity.x;
+        var py = player.body.velocity.y;
+
+        px *= -1;
+        py *= -1;
+        emitter.minParticleSpeed.set(px, py);
+        emitter.maxParticleSpeed.set(px, py);
+
+        emitter.emitX = player.x;
+        emitter.emitY = player.y;
+        
         if (cursors.up.isDown) {
+            emitter.on=true;
             game.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
+
         }
         else if (cursors.down.isDown) {
+            emitter.on=true;
             game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration);
+
         }
         else {
             player.body.acceleration.set(0);
+            emitter.on=false;
         }
 
         if (cursors.left.isDown) {
             player.body.angularVelocity = -300;
+            emitter.on=true;
         }
         else if (cursors.right.isDown) {
             player.body.angularVelocity = 300;
+            emitter.on=true;
         }
         else {
             player.body.angularVelocity = 0;
+            emitter.on=false;
         }
 
 
@@ -131,7 +164,7 @@ var state = {
        // game.debug.cameraInfo(game.camera, 32, 32);
         game.debug.spriteInfo(player, 32, 32);
 
-    },
+        },
     start: function () {
 
     },
