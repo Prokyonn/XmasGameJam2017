@@ -62,7 +62,7 @@ flyGame.prototype = {
         star.scale.setTo(0.1, 0.1);
         star.anchor.set(0.5);
 
-        player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'player');
+        player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + 250, 'player');
         this.game.physics.enable(player);
         player.scale.setTo(0.25, 0.25); //verkleinert das Playerimage
         player.anchor.set(0.5);

@@ -4,6 +4,7 @@
     <head>
     <title>Chistmas Impossible</title>
         <script src="//cdn.jsdelivr.net/npm/phaser-ce@2.9.2/build/phaser.js"></script>
+        <script src="titleScreen.js"></script>
         <script src="flyGame.js"></script>
         <script src="gameHouse.js"></script>
         <style>
@@ -12,9 +13,10 @@
         <script>
             (function() {
                 var game = new Phaser.Game(800, 600, Phaser.CANVAS, "game");
+                game.state.add("titleScreen", titleScreen)
                 game.state.add("flyGame", flyGame);
                 game.state.add("gameHouse", gameHouse);
-                game.state.start("flyGame",true,false,0,null,null);
+                game.state.start("titleScreen",true,false,0,null,null);
             })();
         </script>
     </head>
