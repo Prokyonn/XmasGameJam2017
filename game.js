@@ -4,39 +4,30 @@ var BASE_PATH = 'assets/';
 var player;
 var cursors;
 
-var bmd;
-var circle;
-
-var colors;
-var i = 0;
-var p = null;
-
 var x_offset = 960;
 var y_offset = 540;
 
-var objectCollide;
-
 var state = {
     preload: function () {
-        game.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
-        game.load.image('star1',BASE_PATH + 'assets/star.png?' + ASSET_VERSION);
-        game.load.image('star2',BASE_PATH + 'assets/star2.png?' + ASSET_VERSION);
-        game.load.image('star3',BASE_PATH + 'assets/star3.png?' + ASSET_VERSION);
-        game.load.image('player', BASE_PATH + 'santa.png?' + ASSET_VERSION);
+        this.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
+        this.load.image('star1',BASE_PATH + 'star.png?' + ASSET_VERSION);
+        this.load.image('star2',BASE_PATH + 'star2.png?' + ASSET_VERSION);
+        this.load.image('star3',BASE_PATH + 'star3.png?' + ASSET_VERSION);
+        this.load.image('player', BASE_PATH + 'santa.png?' + ASSET_VERSION);
         this.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);;
         this.load.image('star',BASE_PATH+'HouseStar.png?'+ASSET_VERSION);
     },
     create: function () {
+        this.game.physics.startSystem(Phaser.Physics.Arcade);
         this.game.add.tileSprite(0, 0, 1920, 1080, 'background');
         this.game.world.setBounds(0, 0, 1920, 1080);
-
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         star = this.game.add.sprite(1200 - x_offset, 600 - y_offset, 'star');
         this.game.physics.enable(star);
         star.scale.setTo(1, 1);
         star.anchor.set(0.5);
 
+        cursors = game.input.keyboard.createCursorKeys();
 
         emitter = game.add.emitter(game.world.centerX, game.world.centerY, 400);
         emitter.makeParticles(['star1', 'star2', 'star3']);
