@@ -5,6 +5,7 @@ var player;
 var facing = 'left';
 var jumpTimer = 0;
 var cursors;
+var floor;
 var jumpButton;
 var bg;
 
@@ -18,6 +19,10 @@ var state = {
     create: function () {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.world.setBounds(0, 0, 1920, 600);
+
+        floor = game.add.sprite(0, game.world.height - 8, 'floor');
+        game.physics.enable(floor);
+        floor.body.immovable = true;
 
         bg = game.add.tileSprite(0, 0, 1920, 600, 'background');
 
@@ -40,14 +45,19 @@ var state = {
 
         cursors = game.input.keyboard.createCursorKeys();
         jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.chimney = this.add.sprite(0, this.world.height - 8, 'chimney');
+
+        this.chimneys = this.add.group();
+        this.spawnChimney();
+
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
         cursors = game.input.keyboard.createCursorKeys();
     },
     update: function () {
         // game.physics.arcade.collide(player, layer);
-        this.game.physics.arcade.overlap(this.player, this.chimneys, this.killedByChimney, null, this);
+        // game.physics.arcade.overlap(this.player, this.chimneys, this.killedByChimney, null, this);
+        game.physics.arcade.collide(player, this.chimneys);
+
         player.body.velocity.x = 0;
 
         if (cursors.left.isDown) {
@@ -66,7 +76,7 @@ var state = {
                 facing = 'right';
             }
         }
-        else if (this.gameOver){
+        else if (this.gameOver) {
             this.showHint(player, "FUCK! I woke them up.")
         }
         else {
@@ -89,6 +99,15 @@ var state = {
             jumpTimer = game.time.now + 750;
         }
 
+    },
+    spawnChimney: function () {
+        var chimney = this.chimneys.create(
+            game.width - 24,
+            floor.body.top - 96,
+            'chimney'
+        );
+        this.game.physics.arcade.enable(chimney);
+        chimney.body.velocity.x = -200;
     }, render: function () {
         // game.debug.text(game.time.physicsElapsed, 32, 32);
         // game.debug.body(player);
@@ -134,7 +153,7 @@ var state = {
         // this.timeOver = this.game.time.now;
         this.gameOver = true;
 
-       // this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
+        // this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
     }
 };
 
