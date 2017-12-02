@@ -16,6 +16,21 @@ var smallTable;
 var gameHouse = function(game) { }
 
 gameHouse.prototype = {
+    init: function(score,timer,timerEvent) {
+        if(timer==null){
+            this.timer = this.game.time.create();
+            this.timerEvent = this.timer.add(Phaser.Timer.MINUTE * this.minute + Phaser.Timer.SECOND * this.second, this.endTimer, this);
+        }
+        else{
+            this.timer=timer;
+            this.timerEvent=timerEvent;
+        }
+        if(score==null){
+            this.score=0;
+        }else {
+            this.score = score;
+        }
+    },
     preload: function () {
         this.game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
         this.game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION, 24, 96);
@@ -55,11 +70,38 @@ gameHouse.prototype = {
 
         this.hints = this.add.group();
 
+        this.scoreText = this.add.text(900, 100,
+            "",
+            {
+                fill: '#2aff4d',
+                align: 'center'
+            }
+        );
+        this.scoreText.anchor.setTo(0.5, 0.5);
+        this.scoreText.fontSize = 20;
+        this.scoreText.fixedToCamera = true;
+        this.scoreText.cameraOffset.setTo(700, 20);
+
+        this.timeText = this.add.text(900, 100,
+            "",
+            {
+                fill: '#2aff4d',
+                align: 'center'
+            }
+        );
+        this.timeText.anchor.setTo(0.5, 0.5);
+        this.timeText.fontSize = 20;
+        this.timeText.fixedToCamera = true;
+        this.timeText.cameraOffset.setTo(550, 20);
+
+
+
         this.game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
         cursors = this.game.input.keyboard.createCursorKeys();
     },
     update: function () {
+        this.start();
         this.game.physics.arcade.collide(player, this.desks);
         this.game.physics.arcade.collide(floor, this.desks);
         this.game.physics.arcade.collide(player, floor);
@@ -176,8 +218,25 @@ gameHouse.prototype = {
         // game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
         this.game.debug.cameraInfo(this.game.camera, 32, 32);
+        if (this.timer.running) {
+            this.timeText.setText("Time:" + this.formatTime(Math.round((this.timerEvent.delay - this.timer.ms) / 1000)));
+
+
+        }
+        else {
+            this.game.debug.text("Done!", 2, 14, "#0f0");
+        }
+
+    },
+    formatTime: function (s) {
+        // Convert seconds (s) to a nicely formatted and padded time string
+        var minutes = "0" + Math.floor(s / 60);
+        var seconds = "0" + (s - minutes * 60);
+        return minutes.substr(-2) + ":" + seconds.substr(-2);
     },
     start: function () {
+        this.scoreText.setText("SCORE: " + this.score);
+        this.timer.start();
 
     },
     reset: function () {
