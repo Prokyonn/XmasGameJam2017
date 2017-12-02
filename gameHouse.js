@@ -1,82 +1,82 @@
 var ASSET_VERSION = (new Date()).getTime();
 var BASE_PATH = 'assets/';
 
-var gameHouse = function(game) {
-    player = null;
-    facing = 'left';
-    jumpTimer = 0;
-    cursors = null;
-    jumpButton = null;
-    bg = null;
-    lamp;
-    glass;
-}
+var player;
+var facing = 'left';
+var jumpTimer = 0;
+var cursors;
+var floor;
+var jumpButton;
+var bg;
+var desk;
+var lamp;
+var glass;
+var smallTable;
 
-gameHouse.prototype = {
+var state = {
     preload: function () {
-        this.game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
-        this.game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION, 24, 96);
-        this.game.load.image("desk", BASE_PATH + "desk.png?" + ASSET_VERSION);
-        this.game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
-        this.game.load.image("lamp", BASE_PATH + "lamp.png?" + ASSET_VERSION);
-        this.game.load.image("glass", BASE_PATH + "glas.png?" + ASSET_VERSION);
+        game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
+        game.load.image('background', BASE_PATH + 'house_inside.png?' + ASSET_VERSION, 24, 96);
+        game.load.image("desk", BASE_PATH + "desk.png?" + ASSET_VERSION);
+        game.load.image("floor", BASE_PATH + "floor.png?" + ASSET_VERSION);
+        game.load.image("lamp", BASE_PATH + "lamp.png?" + ASSET_VERSION);
+        game.load.image("glass", BASE_PATH + "glas.png?" + ASSET_VERSION);
+        game.load.image("smallTable", BASE_PATH + "tischKlein.png?" + ASSET_VERSION);
     },
     create: function () {
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
-        this.game.world.setBounds(0, 0, 1400, 600);
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+        game.world.setBounds(0, 0, 1920, 600);
 
-        bg = this.game.add.tileSprite(0, 0, 1400, 600, 'background');
 
-        this.game.physics.arcade.gravity.y = 300;
+        bg = game.add.tileSprite(0, 0, 1920, 600, 'background');
+        game.physics.arcade.gravity.y = 300;
 
-        player = this.game.add.sprite(150, 320, 'santa');
-        this.game.physics.enable(player, Phaser.Physics.ARCADE);
-
-        player.body.collideWorldBounds = true;
-        player.body.gravity.y = 1000;
-        player.body.maxVelocity.y = 500;
-        // player.body.setSize(20, 32, 5, 16);
         this.createPlayer();
         this.createFloor();
 
-        player.animations.add('left', [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 24, 30, 31, 32], 22, true);
-        player.animations.add('turn', [4], 20, true);
-        player.animations.add('right', [0, 1, 2, 3, 8, 9, 10, 11, 16, 17, 18, 19, 25, 26, 27, 28, 29], 22, true);
-
-        cursors = this.game.input.keyboard.createCursorKeys();
-        jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-
-        this.game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
+        cursors = game.input.keyboard.createCursorKeys();
+        jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
         this.desks = this.add.group();
         this.spawnDesk(200, 100);
 
         this.lamps = this.add.group();
-        this.spawnLamp(150, 180);
+        this.spawnLamp(150, 66);
+
+        this.smallTables = this.add.group();
+        this.spawnSmallTable(400, 100);
 
         this.glasses = this.add.group();
-        this.spawnGlass(50, 110);
+        this.spawnGlass(50, 52);
+        this.spawnGlass(20, 52);
+        this.spawnGlass(0, 52);
 
         this.hints = this.add.group();
 
         game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
-        cursors = this.game.input.keyboard.createCursorKeys();
+        cursors = game.input.keyboard.createCursorKeys();
     },
     update: function () {
-        // game.physics.arcade.collide(player, layer);
         game.physics.arcade.collide(player, this.desks);
         game.physics.arcade.collide(floor, this.desks);
         game.physics.arcade.collide(player, floor);
         game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
+        game.physics.arcade.overlap(player, this.glasses, this.killedByObject, null, this);
+        game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
 
         player.body.velocity.x = 0;
+
+
+        if (this.gameOver) {
+            this.showHint(player, "FUCK! I woke them up.");
+            this.reset();
+        }
 
         if (cursors.left.isDown) {
             player.body.velocity.x = -300;
 
-            if (facing != 'left') {
+            if (player.body.touching.down) {
                 player.animations.play('left');
                 facing = 'left';
             }
@@ -84,20 +84,17 @@ gameHouse.prototype = {
         else if (cursors.right.isDown) {
             player.body.velocity.x = 300;
 
-            if (facing != 'right') {
+            if (player.body.touching.down) {
                 player.animations.play('right');
                 facing = 'right';
             }
-        }
-        else {
+        } else {
             if (facing != 'idle') {
-                player.animations.stop();
-
                 if (facing == 'left') {
-                    player.frame = 0;
+                    player.animations.play('standLeft');
                 }
                 else {
-                    player.frame = 7;
+                    player.animations.play('standRight');
                 }
                 facing = 'idle';
             }
@@ -105,10 +102,13 @@ gameHouse.prototype = {
 
         if (jumpButton.isDown && player.body.touching.down && game.time.now > jumpTimer) {
             player.body.velocity.y = -1000;
-            jumpTimer = this.game.time.now + 750;
-            player.animations.play('jump');
+            jumpTimer = game.time.now + 750;
+            if (facing == 'left') {
+                player.animations.play('jumpLeft');
+            } else {
+                player.animations.play('jumpRight');
+            }
         }
-
     },
     spawnDesk: function (x, y) {
         desk = this.desks.create(
@@ -134,6 +134,7 @@ gameHouse.prototype = {
         lamp.body.immovable = true;
         lamp.body.moves = false;
         lamp.body.setSize(80, 125, 26, 0);
+        lamp.anchor.setTo(0.5, 0.9);
         //lamp.scale.setTo(0, 0);
     },
     spawnGlass: function (x, y) {
@@ -148,6 +149,20 @@ gameHouse.prototype = {
         glass.body.moves = false;
         glass.body.setSize(80, 125, 26, 0);
         glass.scale.setTo(0.5, 0.5);
+        glass.anchor.setTo(0.5, 0.9);
+    },
+
+    spawnSmallTable: function (x, y) {
+        smallTable = this.smallTables.create(
+            game.width - x,
+            floor.body.top - y,
+            'smallTable'
+        );
+        game.physics.arcade.enable(smallTable);
+
+        smallTable.body.immovable = true;
+        smallTable.body.moves = false;
+        smallTable.body.setSize(100, 100, 26, 0);
     },
 
     render: function () {
@@ -155,9 +170,10 @@ gameHouse.prototype = {
         game.debug.body(player);
         game.debug.body(desk);
         game.debug.body(lamp);
-        game.debug.body(glass);
+        game.debug.body(smallTable);
+        // game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
-        this.game.debug.cameraInfo(this.game.camera, 32, 32);
+        game.debug.cameraInfo(game.camera, 32, 32);
     },
     start: function () {
 
@@ -167,7 +183,10 @@ gameHouse.prototype = {
         this.gameOver = false;
     },
     killedByObject: function (player, object) {
-        // object.body.rotate += 90;
+        if (facing == 'left')
+            object.angle = -90;
+        else
+            object.angle = 90;
         this.setGameOver();
     },
     addScore: function (addWhat) {
@@ -180,7 +199,7 @@ gameHouse.prototype = {
             focusOn.y,
             text,
             {
-                fill: '#ffdd00',
+                fill: '#ff1105',
                 align: 'center'
             }
         );
@@ -194,11 +213,15 @@ gameHouse.prototype = {
         }, this);
         move.start();
 
-    }, GameOver: function () {
+    },
+    setGameOver: function () {
         this.gameOver = true;
+        this.showHint(player, "FUCK! I woke them up.");
 
         // this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
-    }, createPlayer: function () {
+    },
+
+    createPlayer: function () {
         player = game.add.sprite(150, 320, 'santa');
         player.scale.setTo(1.3, 1.3); //verkleinert das Playerimage
         game.physics.enable(player, Phaser.Physics.ARCADE);
@@ -212,9 +235,11 @@ gameHouse.prototype = {
         player.animations.add('turn', [4], 20, true);
         player.animations.add('left',
             [3, 2, 1, 0, 11, 10, 9, 8, 19, 18, 17, 16, 27, 26, 25, 24], 25, true);
-        // player.animations.jump('jumpLeft',[4], 1, false);
-        // player.animations.jump('jumpRight',[4], 1, false);
-    }, createFloor: function(){
+        player.animations.add('jumpLeft', [33], 1, false);
+        player.animations.add('jumpRight', [32], 1, false);
+        player.animations.add('standLeft', [35], 1, false);
+        player.animations.add('standRight', [34], 1, false);
+    }, createFloor: function () {
         floor = game.add.sprite(0, game.world.height - 50, 'floor');
         game.physics.enable(floor);
         floor.body.collideWorldBounds = true;
