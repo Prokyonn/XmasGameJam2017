@@ -46,13 +46,13 @@ var state = {
         this.spawnLamp(150, 66, 1, 1);
         this.spawnLamp(450, 15, 1.5, 1.5);
 
-        this.smallTables = this.add.group();
-        // this.spawnSmallTable(400, 100);
-
         this.glasses = this.add.group();
         this.spawnGlass(50, 52);
-        this.spawnGlass(20, 52);
-        this.spawnGlass(0, 52);
+        this.spawnGlass(30, 52);
+        this.spawnGlass(-180, 52);
+
+        this.smallTables = this.add.group();
+        this.spawnSmallTable(-350, 100);
 
         this.hints = this.add.group();
 
@@ -194,7 +194,7 @@ var state = {
         game.debug.body(player);
         game.debug.body(desk);
         game.debug.body(lamp);
-        // game.debug.body(smallTable);
+        game.debug.body(smallTable);
         // game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
         game.debug.cameraInfo(game.camera, 32, 32);
