@@ -15,22 +15,23 @@ var smallTable;
 var gift;
 var cat;
 
-var gameHouse = function(game) { }
+var gameHouse = function (game) {
+}
 
 gameHouse.prototype = {
-    init: function(score,timer,timerEvent) {
-        if(timer==null){
-            this.timer = this.game.time.create();
-            this.timerEvent = this.timer.add(Phaser.Timer.MINUTE * this.minute + Phaser.Timer.SECOND * this.second, this.endTimer, this);
-        }
-        else{
-            this.timer=timer;
-            this.timerEvent=timerEvent;
-        }
-        if(score==null){
-            this.score=0;
-        }else {
-            this.score = score;
+    init: function(score,minute,second) {
+        if (minute == null || second == null) {
+            this.minute = 1;
+            this.second = 30;
+        } else {
+            this.minute = minute;
+            this.second = second;
+
+            if (score == null) {
+                this.score = 0;
+            } else {
+                this.score = score;
+            }
         }
     },
     preload: function () {
@@ -56,7 +57,7 @@ gameHouse.prototype = {
         this.createFloor();
 
         this.smallTables = this.add.group();
-        this.spawnSmallTable(-450, 120);
+        this.spawnSmallTable(-550, 120);
 
         this.createPlayer();
 
@@ -74,6 +75,7 @@ gameHouse.prototype = {
         this.spawnGlass(50, 52);
         this.spawnGlass(30, 52);
         this.spawnGlass(-180, 52);
+        this.spawnGlass(-670, 52);
 
         this.cats = this.add.group();
         this.spawnCat(-400, -15);
@@ -108,13 +110,15 @@ gameHouse.prototype = {
         this.timeText.fixedToCamera = true;
         this.timeText.cameraOffset.setTo(550, 20);
 
-
+        timer = this.game.time.create();
+        timerEvent = timer.add(Phaser.Timer.MINUTE * this.minute + Phaser.Timer.SECOND * this.second, this.endTimer, this);
 
         this.game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
         cursors = this.game.input.keyboard.createCursorKeys();
     },
     update: function () {
+        this.start();
         this.game.physics.arcade.collide(player, this.desks);
         this.game.physics.arcade.collide(floor, this.desks);
         this.game.physics.arcade.collide(player, floor);
@@ -158,7 +162,9 @@ gameHouse.prototype = {
         } else if (cursors.down.isDown) {
             if (player.x > 1650) {
                 gift = this.spawnGift(player.body.x, player.body.y);
-                // this.game.state.start("flyGame");
+                player.body.velocity.x = 0;
+                player.body.velocity.y = 0;
+                this.game.time.events.add(5000, this.game.state.start("flyGame"), this);
             }
         } else {
             if (facing != 'idle') {
@@ -266,15 +272,15 @@ gameHouse.prototype = {
 
     render: function () {
         // game.debug.text(game.time.physicsElapsed, 32, 32);
-        this.game.debug.body(player);
-        this.game.debug.body(desk);
-        this.game.debug.body(lamp);
+        // this.game.debug.body(player);
+        // this.game.debug.body(desk);
+        // this.game.debug.body(lamp);
         // game.debug.body(smallTable);
         // game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
-        this.game.debug.cameraInfo(this.game.camera, 32, 32);
-        if (this.timer.running) {
-            this.timeText.setText("Time:" + this.formatTime(Math.round((this.timerEvent.delay - this.timer.ms) / 1000)));
+        // this.game.debug.cameraInfo(this.game.camera, 32, 32);
+        if (timer.running) {
+            this.timeText.setText("Time:" + this.formatTime(Math.round((timerEvent.delay - timer.ms) / 1000)));
 
 
         }
@@ -287,11 +293,13 @@ gameHouse.prototype = {
         // Convert seconds (s) to a nicely formatted and padded time string
         var minutes = "0" + Math.floor(s / 60);
         var seconds = "0" + (s - minutes * 60);
-        return minutes.substr(-2) + ":" + seconds.substr(-2);
+        this.minute= minutes.substr(-2);
+        this.second= seconds.substr(-2);
+        return this.minute+ ":" + this.second;
     },
     start: function () {
         this.scoreText.setText("SCORE: " + this.score);
-        this.timer.start();
+        timer.start();
 
     },
     reset: function () {

@@ -13,14 +13,13 @@ var flyGame = function (game) {
 
 flyGame.prototype = {
 
-    init: function(score,timer,timerEvent) {
-        if(timer==null){
-            this.timer = this.game.time.create();
-            this.timerEvent = this.timer.add(Phaser.Timer.MINUTE * 1 + Phaser.Timer.SECOND * 30, this.endTimer, this);
-        }
-        else{
-            this.timer=timer;
-            this.timerEvent=timerEvent;
+    init: function(score,minute,second) {
+        if(minute==null || second==null){
+            this.minute=1;
+            this.second=30;
+        }else {
+            this.minute=minute;
+            this.second=second;
         }
         if(score==null){
             this.score=0;
@@ -94,6 +93,9 @@ flyGame.prototype = {
         this.timeText.fixedToCamera = true;
         this.timeText.cameraOffset.setTo(550, 20);
 
+        timer = this.game.time.create();
+        timerEvent = timer.add(Phaser.Timer.MINUTE * this.minute + Phaser.Timer.SECOND * this.second, this.endTimer, this);
+
 
         this.game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
 
@@ -144,8 +146,8 @@ flyGame.prototype = {
 
     }, render: function () {
         // game.debug.cameraInfo(game.camera, 32, 32);
-        if (this.timer.running) {
-            this.timeText.setText("Time:" + this.formatTime(Math.round((this.timerEvent.delay - this.timer.ms) / 1000)));
+        if (timer.running) {
+            this.timeText.setText("Time:" + this.formatTime(Math.round((timerEvent.delay - timer.ms) / 1000)));
 
 
         }
@@ -158,11 +160,13 @@ flyGame.prototype = {
         // Convert seconds (s) to a nicely formatted and padded time string
         var minutes = "0" + Math.floor(s / 60);
         var seconds = "0" + (s - minutes * 60);
-        return minutes.substr(-2) + ":" + seconds.substr(-2);
+        this.minute= minutes.substr(-2);
+        this.second= seconds.substr(-2);
+        return this.minute+ ":" + this.second;
     },
     start: function () {
         this.scoreText.setText("SCORE: " + this.score);
-        this.timer.start();
+        timer.start();
 
 
     }
@@ -172,7 +176,7 @@ flyGame.prototype = {
     },
     killByCircle: function (player, star) {
         star.kill();
-        this.game.state.start("gameHouse",true,false,this.score,this.timer,this.timerEvent);
+        this.game.state.start("gameHouse",true,false,this.score,this.minute,this.second);
     }
 };
 
