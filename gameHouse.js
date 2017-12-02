@@ -8,6 +8,7 @@ var cursors;
 var floor;
 var jumpButton;
 var bg;
+var desk;
 
 var state = {
     preload: function () {
@@ -22,17 +23,16 @@ var state = {
 
 
         bg = game.add.tileSprite(0, 0, 1920, 600, 'background');
-
         game.physics.arcade.gravity.y = 300;
 
+        this.createPlayer();
         player = game.add.sprite(150, 320, 'santa');
         player.scale.setTo(1.3, 1.3); //verkleinert das Playerimage
         game.physics.enable(player, Phaser.Physics.ARCADE);
-
         player.body.collideWorldBounds = true;
         player.body.gravity.y = 1000;
         player.body.maxVelocity.y = 1000;
-        player.body.setSize(150, 133, 0, 0);
+        player.body.setSize(120, 133, 20, 0);
 
         player.animations.add('right',
             [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31], 25, true);
@@ -64,6 +64,7 @@ var state = {
         game.physics.arcade.collide(floor, this.desks);
         //game.physics.arcade.overlap(player, this.tables, this.killedByChimney, null, this);
         game.physics.arcade.collide(player, this.desks);
+        game.physics.arcade.overlap(player, this.desks, this.killedByChimney, null, this);
 
         player.body.velocity.x = 0;
 
@@ -97,7 +98,6 @@ var state = {
                 else {
                     player.frame = 7;
                 }
-
                 facing = 'idle';
             }
         }
@@ -109,22 +109,23 @@ var state = {
 
     },
     spawnDesk: function () {
-        var desk = this.desks.create(
+        desk = this.desks.create(
             game.width - 200,
-            floor.body.top - 200,
+            floor.body.top - 100,
             'desk'
         );
         game.physics.arcade.enable(desk);
-        desk.body.setSize(775, 113);
-        desk.body.moves = false;
-        desk.body.velocity.x = 0;
-       // desk.body.setSize(150, 133, 0, 0);
 
+        desk.body.immovable = true;
+        desk.body.moves = false;
+        desk.body.setSize(700, 133, 0, 90);
+        desk.scale.setTo(0.5, 0.5);
     },
 
     render: function () {
         // game.debug.text(game.time.physicsElapsed, 32, 32);
-        // game.debug.body(player);
+        game.debug.body(player);
+        game.debug.body(desk);
         // game.debug.bodyInfo(player, 16, 24);
         game.debug.cameraInfo(game.camera, 32, 32);
     },
@@ -138,7 +139,7 @@ var state = {
     killedByChimney: function (player, chimney) {
         chimney.body.velocity.x = 0;
         chimney.body.velocity.y = 0;
-       // this.showHint(player, "FUCK! I woke them up.");
+        this.showHint(player, "FUCK! I woke them up.");
         this.setGameOver();
     },
     addScore: function (addWhat) {
@@ -171,6 +172,8 @@ var state = {
         this.gameOver = true;
 
         // this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
+    }, createPlayer: function () {
+
     }
 };
 
