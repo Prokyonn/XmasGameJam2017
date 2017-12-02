@@ -13,6 +13,7 @@ var lamp;
 var glass;
 var smallTable;
 var gift;
+var cat;
 
 var state = {
     preload: function () {
@@ -24,6 +25,7 @@ var state = {
         game.load.image("glass", BASE_PATH + "glas.png?" + ASSET_VERSION);
         game.load.image("smallTable", BASE_PATH + "tischKlein.png?" + ASSET_VERSION);
         game.load.image("gift", BASE_PATH + "gift.png?" + ASSET_VERSION);
+        game.load.image("cat", BASE_PATH + "cat.png?" + ASSET_VERSION);
     },
     create: function () {
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -51,8 +53,12 @@ var state = {
         this.spawnGlass(30, 52);
         this.spawnGlass(-180, 52);
 
+        this.cats = this.add.group();
+        this.spawnCat(-400, -15);
+
+
         this.smallTables = this.add.group();
-        this.spawnSmallTable(-350, 100);
+        // this.spawnSmallTable(-350, 100);
 
         this.hints = this.add.group();
 
@@ -72,7 +78,9 @@ var state = {
         game.physics.arcade.collide(player, this.glasses);
 
         game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
-        game.physics.arcade.overlap(player, this.lamps);
+        game.physics.arcade.collide(player, this.lamps);
+
+        game.physics.arcade.overlap(player, this.cats, this.killedByObject, null, this);
 
         player.body.velocity.x = 0;
 
@@ -164,6 +172,22 @@ var state = {
         glass.anchor.setTo(0.5, 0.9);
     },
 
+    spawnCat: function (x, y) {
+        cat = this.cats.create(
+            game.width - x,
+            floor.body.top - y,
+            'cat'
+        );
+        game.physics.arcade.enable(cat);
+
+        cat.body.immovable = true;
+        cat.body.moves = false;
+        cat.body.setSize(80, 125, 26, 0);
+        cat.scale.setTo(0.1, 0.1);
+        cat.anchor.setTo(0.5, 0.9);
+    },
+
+
     spawnSmallTable: function (x, y) {
         smallTable = this.smallTables.create(
             game.width - x,
@@ -193,7 +217,7 @@ var state = {
         game.debug.body(player);
         game.debug.body(desk);
         game.debug.body(lamp);
-        game.debug.body(smallTable);
+        // game.debug.body(smallTable);
         // game.debug.body(glass);
         // game.debug.bodyInfo(player, 16, 24);
         game.debug.cameraInfo(game.camera, 32, 32);
