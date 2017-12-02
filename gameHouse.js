@@ -160,7 +160,7 @@ gameHouse.prototype = {
         } else if (cursors.down.isDown) {
             if (player.x > 1650) {
                 gift = this.spawnGift(player.body.x, player.body.y);
-                // this.game.state.start("flyGame");
+                this.game.state.start("flyGame",true, false, this.score+50, this.minute,this.second+10);
             }
         } else {
             if (facing != 'idle') {
