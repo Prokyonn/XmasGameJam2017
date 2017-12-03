@@ -19,7 +19,7 @@ var gameHouse = function (game) {
 }
 
 gameHouse.prototype = {
-    init: function(score,minute,second) {
+    init: function(score,minute,second, lastStarPos, playerPosX, playerPosY, playerRotaiton) {
         if (minute == null || second == null) {
             this.minute = 1;
             this.second = 30;
@@ -33,6 +33,10 @@ gameHouse.prototype = {
                 this.score = score;
             }
         }
+        this.lastStarPos = lastStarPos;
+        this.playerPosX = playerPosX;
+        this.playerPosY = playerPosY;
+        this.playerRotaiton = playerRotaiton;
     },
     preload: function () {
         this.game.load.spritesheet('santa', BASE_PATH + 'santa-sprite-sheet.png?' + ASSET_VERSION, 150, 150);
@@ -96,7 +100,7 @@ gameHouse.prototype = {
         this.scoreText = this.add.text(900, 100,
             "",
             {
-                fill: '#2aff4d',
+                fill: '#006400',
                 align: 'center'
             }
         );
@@ -108,7 +112,7 @@ gameHouse.prototype = {
         this.timeText = this.add.text(900, 100,
             "",
             {
-                fill: '#2aff4d',
+                fill: '#006400',
                 align: 'center'
             }
         );
@@ -145,7 +149,6 @@ gameHouse.prototype = {
 
         player.body.velocity.x = 0;
 
-
         if (this.gameOver) {
             this.showHint(player, "FUCK! I woke them up.");
             this.reset();
@@ -157,6 +160,9 @@ gameHouse.prototype = {
             if (player.body.touching.down) {
                 player.animations.play('left');
                 facing = 'left';
+            } else if(facing == 'right-jump'){
+                player.animations.play('jumpLeft');
+                facing = 'left-jump';
             }
         }
         else if (cursors.right.isDown) {
@@ -165,6 +171,9 @@ gameHouse.prototype = {
             if (player.body.touching.down) {
                 player.animations.play('right');
                 facing = 'right';
+            } else if(facing == 'left-jump'){
+                player.animations.play('jumpRight');
+                facing = 'right-jump';
             }
         } else if (cursors.down.isDown) {
             if (player.x > 1650) {
@@ -172,27 +181,44 @@ gameHouse.prototype = {
                 player.body.velocity.x = 0;
                 player.body.velocity.y = 0;
                 this.game.physics.arcade.gravity.y = 0;
-                this.game.time.events.add(this.game.state.start("flyGame",true,false,this.score+50,this.minute,this.second), this);
+                this.game.time.events.add(this.game.state.start("flyGame",true,false,this.score+50,this.minute,parseInt(this.second)+10, this.lastStarPos, this.playerPosX, this.playerPosY, this.playerRotaiton), this);
             }
+        } else if(player.body.touching.down){
+            if(facing == 'left-jump'){
+                player.animations.play('standLeft');
+                facing = 'idle-left'; 
+            } else if(facing == 'right-jump'){
+                player.animations.play('standRight');
+                facing = 'idle-right';
+            } 
         } else {
-            if (facing != 'idle') {
+            if (facing != 'idle-left' || facing != 'idle-right') {
                 if (facing == 'left') {
                     player.animations.play('standLeft');
+                    facing = 'idle-left';
                 }
-                else {
+                else if(facing == 'right') {
                     player.animations.play('standRight');
+                    facing = 'idle-right';
+                } else if(facing == 'left-jump'){
+                    player.animations.play('jumpLeft');
+                    facing = 'left-jump';
+                } else if(facing == 'right-jump'){
+                    player.animations.play('jumpRight');
+                    facing = 'right-jump';
                 }
-                facing = 'idle';
-            }
+           }
         }
 
         if (jumpButton.isDown && player.body.touching.down && this.game.time.now > jumpTimer) {
             player.body.velocity.y = -1000;
             jumpTimer = this.game.time.now + 750;
-            if (facing == 'left') {
+            if (facing == 'left' || facing == 'idle-left') {
                 player.animations.play('jumpLeft');
+                facing = 'left-jump';
             } else {
                 player.animations.play('jumpRight');
+                facing = 'right-jump';
             }
         }
     },
@@ -292,13 +318,10 @@ gameHouse.prototype = {
         // this.game.debug.cameraInfo(this.game.camera, 32, 32);
         if (timer.running) {
             this.timeText.setText("Time:" + this.formatTime(Math.round((timerEvent.delay - timer.ms) / 1000)));
-
-
         }
         if(this.minute==0 && this.second==0){
             this.game.state.start("gameOverScreen");
         }
-
     },
     formatTime: function (s) {
         // Convert seconds (s) to a nicely formatted and padded time string
@@ -311,7 +334,6 @@ gameHouse.prototype = {
     start: function () {
         this.scoreText.setText("SCORE: " + this.score);
         timer.start();
-
     },
     reset: function () {
         this.gameStarted = false;

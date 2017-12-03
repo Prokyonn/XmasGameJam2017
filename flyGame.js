@@ -13,7 +13,7 @@ var flyGame = function (game) {
 
 flyGame.prototype = {
 
-    init: function(score,minute,second) {
+    init: function(score,minute,second, lastStarPos, playerPosX, playerPosY, playerRotation) {
         if(minute==null || second==null){
             this.minute=1;
             this.second=30;
@@ -26,7 +26,22 @@ flyGame.prototype = {
         }else {
             this.score = score;
         }
-        
+        if(lastStarPos != null){
+            this.lastStarPos = lastStarPos;
+        }
+        if(playerPosX == null || playerPosY == null){
+            this.playerPosX = this.game.world.centerX;
+            this.playerPosY = this.game.world.centerY + 250;
+        } else {
+            this.playerPosX = playerPosX;
+            this.playerPosY = playerPosY;
+        }
+        if(playerRotation == null){
+            this.playerRotation = 0;
+        } else {
+            this.playerRotation = playerRotation;
+        }
+
     },
     preload: function () {
         this.load.image('background', BASE_PATH + 'Map1.png?' + ASSET_VERSION);
@@ -41,7 +56,6 @@ flyGame.prototype = {
     create: function () {
         this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         this.scale.pageAlignHorizontally = true;
-        //this.scale.setScreenSize();
 
         this.game.physics.startSystem(Phaser.Physics.Arcade);
         this.game.add.tileSprite(0, 0, 1920, 1080, 'background');
@@ -49,31 +63,35 @@ flyGame.prototype = {
 
         cursors = this.game.input.keyboard.createCursorKeys();
 
-        emitter = this.game.add.emitter(this.game.world.centerX, this.game.world.centerY, 400);
+        emitter = this.game.add.emitter(this.playerPosX, this.playerPosY, 400);
         emitter.makeParticles(['star1', 'star2', 'star3', 'glitter']);
         emitter.gravity = 200;
         emitter.setAlpha(1, 0, 3000);
         emitter.setScale(0.4, 0, 0.4, 0, 3000);
         emitter.start(false, 3000, 5);
 
-        var randomnumber = Math.floor(Math.random() * 20);
-        star = this.game.add.sprite(housePosX[randomnumber], housePosY[randomnumber], 'star');
+        this.starPos = Math.floor(Math.random() * 19);
+        while(this.starPos == this.lastStarPos){
+            this.starPos = Math.floor(Math.random() * 19); 
+        }
+        star = this.game.add.sprite(housePosX[this.starPos], housePosY[this.starPos], 'star');
         this.game.physics.enable(star);
         star.scale.setTo(0.1, 0.1);
         star.anchor.set(0.5);
 
-        player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + 250, 'player');
+        player = this.game.add.sprite(this.playerPosX, this.playerPosY, 'player');
         this.game.physics.enable(player);
         player.scale.setTo(0.25, 0.25); //verkleinert das Playerimage
         player.anchor.set(0.5);
         player.body.fixedRotation = true;
         player.body.collideWorldBounds = true;
         player.body.drag.set(50);
+        player.rotation = this.playerRotation;
 
         this.scoreText = this.add.text(900, 100,
             "",
             {
-                fill: '#2aff4d',
+                fill: '#006400',
                 align: 'center'
             }
         );
@@ -85,7 +103,7 @@ flyGame.prototype = {
         this.timeText = this.add.text(900, 100,
             "",
             {
-                fill: '#2aff4d',
+                fill: '#006400',
                 align: 'center'
             }
         );
@@ -97,10 +115,7 @@ flyGame.prototype = {
         timer = this.game.time.create();
         timerEvent = timer.add(Phaser.Timer.MINUTE * this.minute + Phaser.Timer.SECOND * this.second, this.endTimer, this);
 
-
         this.game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1);
-
-
     },
     update: function () {
         this.start();
@@ -115,17 +130,15 @@ flyGame.prototype = {
         emitter.emitX = player.x;
         emitter.emitY = player.y;
 
-        this.game.physics.arcade.overlap(player, star, this.killByCircle, null, this);
+        this.game.physics.arcade.overlap(player, star, this.killByStar, null, this);
 
         if (cursors.up.isDown) {
             emitter.on = true;
             this.game.physics.arcade.accelerationFromRotation(player.rotation, 200, player.body.acceleration);
-
         }
         else if (cursors.down.isDown) {
             emitter.on = true;
             this.game.physics.arcade.accelerationFromRotation(player.rotation, 0, player.body.acceleration);
-
         }
         else {
             player.body.acceleration.set(0);
@@ -142,20 +155,16 @@ flyGame.prototype = {
         }
         else {
             player.body.angularVelocity = 0;
-
         }
 
     }, render: function () {
         // game.debug.cameraInfo(game.camera, 32, 32);
         if (timer.running) {
             this.timeText.setText("Time:" + this.formatTime(Math.round((timerEvent.delay - timer.ms) / 1000)));
-
-
         }
         if(this.minute==0 && this.second==0){
             this.game.state.start("gameOverScreen");
         }
-
     },
     formatTime: function (s) {
         // Convert seconds (s) to a nicely formatted and padded time string
@@ -168,25 +177,12 @@ flyGame.prototype = {
     start: function () {
         this.scoreText.setText("SCORE: " + this.score);
         timer.start();
-
-
-    }
-    ,
+    },
     reset: function () {
 
     },
-    killByCircle: function (player, star) {
+    killByStar: function (player, star) {
         star.kill();
-        this.game.state.start("gameHouse",true,false,this.score,this.minute,this.second);
+        this.game.state.start("gameHouse",true,false,this.score,this.minute,this.second, this.starPos, player.x, player.y, player.rotation);
     }
 };
-
-/*
-var game = new Phaser.Game(
-    800,
-    600,
-    Phaser.CANVAS,
-    document.querySelector("#screen"),
-    state
-);
-    */

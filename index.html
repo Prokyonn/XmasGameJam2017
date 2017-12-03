@@ -9,19 +9,49 @@
         <script src="gameHouse.js"></script>
         <script src="gameOverScreen.js"></script>
         <style>
-            body{margin:0}
+            body {
+                background-image: url("christmas-background.jpg");
+                background-position: center center;
+                background-repeat:  no-repeat;
+                background-attachment: fixed;
+                background-size:  cover;
+            }
+            #game {
+                position: absolute;
+                width: 800px;
+                height: 600px;
+                margin: -300px 0 0 -400px;
+                left: 50%;
+                top: 50%;
+            }
+            #controls {
+                position: absolute;
+                width: 800px;
+                height: 200px;
+                margin: -100px 0 0 -400px;
+                left: 50%;
+                top: 92%;
+            }
+            p{
+                color: red;
+            }
         </style>
-        <script>
-            (function() {
-                var game = new Phaser.Game(800, 600, Phaser.CANVAS, "game");
-                game.state.add("titleScreen", titleScreen);
-                game.state.add("flyGame", flyGame);
-                game.state.add("gameHouse", gameHouse);
-                game.state.add("gameOverScreen", gameOverScreen);
-                game.state.start("titleScreen",true,false,0,1,30);
-            })();
-        </script>
     </head>
     <body>
+        <div id="game"></div>
+        <div id="controls">
+                <p>Controls for flying: Arrow keys</p>
+                <p>Controls in the house: "Arrow-down" to place the gift under the tree. "Spacebar" to jump. "Arrow-left" and "Arrow-right" to move left/right.</p>
+            </div>
+        <script>
+                (function() {
+                    var game = new Phaser.Game(800, 600, Phaser.CANVAS, document.querySelector('#game'));
+                    game.state.add("titleScreen", titleScreen);
+                    game.state.add("flyGame", flyGame);
+                    game.state.add("gameHouse", gameHouse);
+                    game.state.add("gameOverScreen", gameOverScreen);
+                    game.state.start("titleScreen",true,false,0,1,30);
+                })();
+        </script>
     </body>
 </html>
