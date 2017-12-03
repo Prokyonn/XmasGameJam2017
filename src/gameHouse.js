@@ -375,9 +375,10 @@ gameHouse.prototype = {
         this.scoreText.setText("SCORE: " + this.score);
     },
     subScore: function (subWhat) {
-        if((this.score - subWhat) >= 0){
+        /*if((this.score - subWhat) >= 0){
             this.score -= subWhat;
-        }
+        }*/
+        this.score -= subWhat;
         this.scoreText.setText("SCORE: " + this.score);
     },
     showHint: function (focusOn, text) {
