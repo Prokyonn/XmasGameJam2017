@@ -9,16 +9,9 @@ titleScreen.prototype = {
     },
     create: function () {
         var sprite = this.game.add.tileSprite(0, 0, 800, 600, 'background');
-
-
-    }, update: function () {
-
-        if(this.game.input.keyboard.isDown(Phaser.Keyboard.UP)
-            || (this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN)
-                || (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)
-                    || (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)
-                        || (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)
-                            || this.game.input.activePointer.isDown))))) {
+    },
+    update: function () {
+        if(this.game.input.keyboard.isDown(Phaser.Keyboard.ENTER) || this.game.input.activePointer.isDown) {
             this.game.state.start("flyGame");
         }
     }

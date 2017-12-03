@@ -2,8 +2,6 @@ var ASSET_VERSION = (new Date()).getTime();
 var BASE_PATH = 'assets/';
 
 var flyGame = function (game) {
-    console.log("%cStarting my awesome game", "color:white; background:red");
-
     player = null;
     cursors = null;
 
@@ -30,8 +28,8 @@ flyGame.prototype = {
             this.lastStarPos = lastStarPos;
         }
         if(playerPosX == null || playerPosY == null){
-            this.playerPosX = this.game.world.centerX;
-            this.playerPosY = this.game.world.centerY + 250;
+            this.playerPosX = null;
+            this.playerPosY = null;
         } else {
             this.playerPosX = playerPosX;
             this.playerPosY = playerPosY;
@@ -78,6 +76,11 @@ flyGame.prototype = {
         this.game.physics.enable(star);
         star.scale.setTo(0.1, 0.1);
         star.anchor.set(0.5);
+
+        if(this.playerPosX == null || this.playerPosY == null){
+            this.playerPosX = this.game.world.centerX;
+            this.playerPosY = this.game.world.centerY + 250;
+        }
 
         player = this.game.add.sprite(this.playerPosX, this.playerPosY, 'player');
         this.game.physics.enable(player);

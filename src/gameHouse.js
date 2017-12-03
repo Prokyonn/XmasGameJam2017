@@ -72,8 +72,8 @@ gameHouse.prototype = {
         this.spawnDesk(200, 100);
 
         this.lamps = this.add.group();
-        this.spawnLamp(150, 66, 1, 1);
-        this.spawnLamp(450, 15, 1.5, 1.5);
+        this.spawnLamp(150, 66, 1, 1, true, 0);
+        this.spawnLamp(450, 15, 1.5, 1.5, true, 0);
 
         this.glasses = this.add.group();
         // this.spawnGlass(50, 52);
@@ -83,13 +83,13 @@ gameHouse.prototype = {
         x2 = this.getRandomInt(-180, 180);
         x3 = this.getRandomInt(-180, 180);
 
-        this.spawnGlass(x1, 52);
-        this.spawnGlass(x2, 52);
-        this.spawnGlass(x3, 52);
-        this.spawnGlass(-670, 52);
+        this.spawnGlass(x1, 52, true, 0);
+        this.spawnGlass(x2, 52, true, 0);
+        this.spawnGlass(x3, 52, true, 0);
+        this.spawnGlass(-670, 52, true, 0);
 
         this.cats = this.add.group();
-        this.spawnCat(-400, -15);
+        this.spawnCat(-400, -15, true, 0);
 
 
         // this.smallTables = this.add.group();
@@ -136,16 +136,13 @@ gameHouse.prototype = {
 
         this.game.physics.arcade.collide(player, this.smallTables);
 
-        this.game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
+        this.game.physics.arcade.overlap(player, this.lamps, this.killedLamp, null, this);
         this.game.physics.arcade.collide(player, this.lamps);
 
-        this.game.physics.arcade.overlap(player, this.glasses, this.killedByObject, null, this);
+        this.game.physics.arcade.overlap(player, this.glasses, this.killedGlass, null, this);
         this.game.physics.arcade.collide(player, this.glasses);
 
-        this.game.physics.arcade.overlap(player, this.lamps, this.killedByObject, null, this);
-        this.game.physics.arcade.collide(player, this.lamps);
-
-        this.game.physics.arcade.overlap(player, this.cats, this.killedByObject, null, this);
+        this.game.physics.arcade.overlap(player, this.cats, this.killedCat, null, this);
 
         player.body.velocity.x = 0;
 
@@ -181,7 +178,7 @@ gameHouse.prototype = {
                 player.body.velocity.x = 0;
                 player.body.velocity.y = 0;
                 this.game.physics.arcade.gravity.y = 0;
-                this.game.time.events.add(this.game.state.start("flyGame",true,false,this.score+50,this.minute,parseInt(this.second)+10, this.lastStarPos, this.playerPosX, this.playerPosY, this.playerRotaiton), this);
+                this.game.time.events.add(this.game.state.start("flyGame",true,false,this.score+50,this.minute,parseInt(this.second)+3, this.lastStarPos, this.playerPosX, this.playerPosY, this.playerRotaiton), this);
             }
         } else if(player.body.touching.down){
             if(facing == 'left-jump'){
@@ -236,51 +233,58 @@ gameHouse.prototype = {
         desk.body.setSize(700, 133, 0, 90);
         desk.scale.setTo(0.5, 0.5);
     },
-    spawnLamp: function (x, y, scaleX, scaleY) {
+    spawnLamp: function (x, y, scaleX, scaleY, enablePhysics, rotation) {
         lamp = this.lamps.create(
             this.game.width - x,
             floor.body.top - y,
             'lamp'
         );
-        this.game.physics.arcade.enable(lamp);
 
-        lamp.body.immovable = true;
-        lamp.body.moves = false;
-        lamp.body.setSize(50, 125, 35, 0);
+        if(enablePhysics){
+            this.game.physics.arcade.enable(lamp);
+            lamp.body.immovable = true;
+            lamp.body.moves = false;
+            lamp.body.setSize(50, 125, 35, 0);
+        }
         lamp.anchor.setTo(0.5, 0.9);
         lamp.scale.setTo(scaleX, scaleY);
+        lamp.angle = rotation;
     },
-    spawnGlass: function (x, y) {
+    spawnGlass: function (x, y, enablePhysics, rotation) {
         glass = this.glasses.create(
             this.game.width - x,
             floor.body.top - y,
             'glass'
         );
-        this.game.physics.arcade.enable(glass);
 
-        glass.body.immovable = true;
-        glass.body.moves = false;
-        glass.body.setSize(80, 125, 26, 0);
+        if(enablePhysics){
+            this.game.physics.arcade.enable(glass);
+            glass.body.immovable = true;
+            glass.body.moves = false;
+            glass.body.setSize(80, 90, 26, 25);
+        }
+
         glass.scale.setTo(0.5, 0.5);
         glass.anchor.setTo(0.5, 0.9);
+        glass.angle = rotation;
     },
-
-    spawnCat: function (x, y) {
+    spawnCat: function (x, y, enablePhysics, rotation) {
         cat = this.cats.create(
             this.game.width - x,
             floor.body.top - y,
             'cat'
         );
-        this.game.physics.arcade.enable(cat);
 
-        cat.body.immovable = true;
-        cat.body.moves = false;
-        cat.body.setSize(800, 2000, 26, 0);
+        if(enablePhysics){
+            this.game.physics.arcade.enable(cat);
+            cat.body.immovable = true;
+            cat.body.moves = false;
+            cat.body.setSize(800, 2000, 26, 0);
+        }
         cat.scale.setTo(0.1, 0.1);
         cat.anchor.setTo(0.5, 0.9);
+        cat.angle = rotation;
     },
-
-
     spawnSmallTable: function (x, y) {
         smallTable = this.smallTables.create(
             this.game.width - x,
@@ -304,20 +308,23 @@ gameHouse.prototype = {
         gift.body.moves = false;
         gift.body.setSize(100, 100, 26, 0);
     },
-
     render: function () {
         // game.debug.text(game.time.physicsElapsed, 32, 32);
         // this.game.debug.body(player);
-        // this.game.debug.body(desk);
-        // this.game.debug.body(lamp);
-        // game.debug.body(smallTable);
-        // game.debug.body(glass);
+        //this.game.debug.body(desk);
+        //this.game.debug.body(lamp);
+        //this.game.debug.body(smallTable);
+        //this.game.debug.body(glass);
+        //this.game.debug.body(cat);
         // game.debug.bodyInfo(player, 16, 24);
         // this.game.debug.cameraInfo(this.game.camera, 32, 32);
         if (timer.running) {
-            this.timeText.setText("Time:" + this.formatTime(Math.round((timerEvent.delay - timer.ms) / 1000)));
+            this.timeText.setText("Time: " + this.formatTime(Math.round((timerEvent.delay - timer.ms) / 1000)));
         }
         if(this.minute==0 && this.second==0){
+            player.body.velocity.x = 0;
+            player.body.velocity.y = 0;
+            this.game.physics.arcade.gravity.y = 0;
             this.game.state.start("gameOverScreen",true,false,this.score);
         }
     },
@@ -334,18 +341,43 @@ gameHouse.prototype = {
         timer.start();
     },
     reset: function () {
-        this.gameStarted = false;
         this.gameOver = false;
     },
-    killedByObject: function (player, object) {
-        if (facing == 'left')
-            object.angle = -90;
-        else
-            object.angle = 90;
+    killedLamp: function (player, lamp) {
+        if (facing == 'left'){
+            this.spawnLamp(this.game.width - lamp.x, floor.body.top - lamp.y, lamp.scale.x, lamp.scale.y, false, -90);
+        } else {
+            this.spawnLamp(this.game.width - lamp.x, floor.body.top - lamp.y, lamp.scale.x, lamp.scale.y, false, 90);
+        }
+        lamp.kill();
+        this.setGameOver();
+    },
+    killedGlass: function(player, glass){
+        if (facing == 'left'){
+            this.spawnGlass(this.game.width - glass.x, floor.body.top - glass.y, false, -90);
+        } else {
+            this.spawnGlass(this.game.width - glass.x, floor.body.top - glass.y, false, 90);
+        }
+        glass.kill();
+        this.setGameOver();
+    },
+    killedCat: function(player, cat){
+        if (facing == 'left'){
+            this.spawnCat(this.game.width - cat.x, floor.body.top - cat.y, false, -90);
+        } else {
+            this.spawnCat(this.game.width - cat.x, floor.body.top - cat.y, false, 90);
+        }
+        cat.kill();
         this.setGameOver();
     },
     addScore: function (addWhat) {
         this.score += addWhat;
+        this.scoreText.setText("SCORE: " + this.score);
+    },
+    subScore: function (subWhat) {
+        if((this.score - subWhat) >= 0){
+            this.score -= subWhat;
+        }
         this.scoreText.setText("SCORE: " + this.score);
     },
     showHint: function (focusOn, text) {
@@ -371,8 +403,8 @@ gameHouse.prototype = {
     },
     setGameOver: function () {
         this.gameOver = true;
-        this.showHint(player, "FUCK! I woke them up.");
-
+        this.subScore(10);
+        //this.showHint(player, "FUCK! I woke them up.");
         // this.scoreText.setText("FINAL SCORE: " + this.score + "\nTOUCH TO TRY AGAIN");
     },
 

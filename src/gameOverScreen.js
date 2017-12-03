@@ -29,14 +29,21 @@ gameOverScreen.prototype = {
         this.scoreText.cameraOffset.setTo(400, 300);
         this.scoreText.setText("SCORE: " + this.score);
 
+        this.startGame = this.add.text(900, 100,"",
+            {
+                fill: '#006400',
+                align: 'center'
+            }
+        );
+        this.startGame.anchor.setTo(0.5, 0.5);
+        this.startGame.fontSize = 16;
+        this.startGame.fixedToCamera = true;
+        this.startGame.cameraOffset.setTo(400, 330);
+        this.startGame.setText("Press ENTER to start a new game");
+
     }, update: function () {
-        if(this.game.input.keyboard.isDown(Phaser.Keyboard.UP)
-            || (this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN)
-                || (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)
-                    || (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)
-                        || (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)
-                            || this.game.input.activePointer.isDown))))) {
-            this.game.state.start("titleScreen");
+        if(this.game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+            this.game.state.start("flyGame");
         }
     }
 }
