@@ -163,7 +163,7 @@ flyGame.prototype = {
             this.timeText.setText("Time:" + this.formatTime(Math.round((timerEvent.delay - timer.ms) / 1000)));
         }
         if(this.minute==0 && this.second==0){
-            this.game.state.start("gameOverScreen");
+            this.game.state.start("gameOverScreen",true,false,this.score);
         }
     },
     formatTime: function (s) {

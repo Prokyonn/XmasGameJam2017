@@ -190,9 +190,7 @@ gameHouse.prototype = {
             } else if(facing == 'right-jump'){
                 player.animations.play('standRight');
                 facing = 'idle-right';
-            } 
-        } else {
-            if (facing != 'idle-left' || facing != 'idle-right') {
+            } else if (facing != 'idle-left' || facing != 'idle-right') {
                 if (facing == 'left') {
                     player.animations.play('standLeft');
                     facing = 'idle-left';
@@ -320,7 +318,7 @@ gameHouse.prototype = {
             this.timeText.setText("Time:" + this.formatTime(Math.round((timerEvent.delay - timer.ms) / 1000)));
         }
         if(this.minute==0 && this.second==0){
-            this.game.state.start("gameOverScreen");
+            this.game.state.start("gameOverScreen",true,false,this.score);
         }
     },
     formatTime: function (s) {

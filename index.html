@@ -4,33 +4,33 @@
     <head>
     <title>Chistmas Impossible</title>
         <script src="//cdn.jsdelivr.net/npm/phaser-ce@2.9.2/build/phaser.js"></script>
-        <script src="titleScreen.js"></script>
-        <script src="flyGame.js"></script>
-        <script src="gameHouse.js"></script>
-        <script src="gameOverScreen.js"></script>
+        <script src="src/titleScreen.js"></script>
+        <script src="src/flyGame.js"></script>
+        <script src="src/gameHouse.js"></script>
+        <script src="src/gameOverScreen.js"></script>
         <style>
             body {
-                background-image: url("christmas-background.jpg");
+                background-image: url("resources/christmas-background.jpg");
                 background-position: center center;
                 background-repeat:  no-repeat;
                 background-attachment: fixed;
                 background-size:  cover;
             }
-            #game {
+            #center{
                 position: absolute;
                 width: 800px;
-                height: 600px;
-                margin: -300px 0 0 -400px;
+                height: 800px;
+                margin: -400px 0 0 -400px;
                 left: 50%;
                 top: 50%;
             }
+            #game {
+                width: 800px;
+                height: 600px;
+            }
             #controls {
-                position: absolute;
                 width: 800px;
                 height: 200px;
-                margin: -100px 0 0 -400px;
-                left: 50%;
-                top: 92%;
             }
             p{
                 color: red;
@@ -38,11 +38,14 @@
         </style>
     </head>
     <body>
-        <div id="game"></div>
-        <div id="controls">
+        <div id=center>
+            <div id="game"></div>
+            <br>
+            <div id="controls">
                 <p>Controls for flying: Arrow keys</p>
                 <p>Controls in the house: "Arrow-down" to place the gift under the tree. "Spacebar" to jump. "Arrow-left" and "Arrow-right" to move left/right.</p>
             </div>
+        </div>
         <script>
                 (function() {
                     var game = new Phaser.Game(800, 600, Phaser.CANVAS, document.querySelector('#game'));
